@@ -38,40 +38,35 @@ export default function Home() {
 
   return (
     <div style={{ minHeight: '100vh', background: 'var(--background)' }}>
-      {/* Header Navbar */}
-      <header style={{ background: '#fff', borderBottom: '1px solid #e2e8f0', padding: '0.75rem 1.5rem', position: 'sticky', top: 0, zIndex: 100 }}>
-        <div style={{ maxWidth: 1200, margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <Link href="/" style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--primary)', textDecoration: 'none' }}>
-            🚀 AdBlock Pro
-          </Link>
-          <nav style={{ display: 'flex', gap: 20, alignItems: 'center' }}>
-            {!loading && (
-              <>
-                {user ? (
-                  <>
-                    <span style={{ fontSize: 14, color: '#475569' }}>👤 {user.name}</span>
-                    <Link href="/dashboard" style={{ fontSize: 14, textDecoration: 'none', color: 'var(--primary)', fontWeight: 600 }}>
-                      Dashboard
-                    </Link>
-                    <button onClick={handleLogout} style={{ fontSize: 14, background: '#f1f5f9', border: '1px solid #cbd5e1', padding: '0.5rem 1rem', borderRadius: 6, cursor: 'pointer', fontWeight: 600 }}>
-                      Đăng xuất
-                    </button>
-                  </>
-                ) : (
-                  <>
-                    <Link href="/auth/login" style={{ fontSize: 14, textDecoration: 'none', color: 'var(--primary)', fontWeight: 600 }}>
-                      Đăng nhập
-                    </Link>
-                    <Link href="/auth/register" style={{ fontSize: 14, textDecoration: 'none', background: 'var(--primary)', color: '#fff', padding: '0.5rem 1rem', borderRadius: 6, fontWeight: 600 }}>
-                      Đăng ký
-                    </Link>
-                  </>
-                )}
-              </>
-            )}
-          </nav>
+      {/* Auth Navbar */}
+      <nav style={{ background: '#fff', borderBottom: '1px solid #e2e8f0', padding: '0.5rem 1.5rem' }}>
+        <div style={{ maxWidth: 1200, margin: '0 auto', display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: 16 }}>
+          {!loading && (
+            <>
+              {user ? (
+                <>
+                  <span style={{ fontSize: 14, color: '#475569' }}>👤 {user.name}</span>
+                  <Link href="/dashboard" style={{ fontSize: 14, textDecoration: 'none', color: 'var(--primary)', fontWeight: 600 }}>
+                    Dashboard
+                  </Link>
+                  <button onClick={handleLogout} style={{ fontSize: 14, background: '#f1f5f9', border: '1px solid #cbd5e1', padding: '0.5rem 1rem', borderRadius: 6, cursor: 'pointer', fontWeight: 600 }}>
+                    Đăng xuất
+                  </button>
+                </>
+              ) : (
+                <>
+                  <Link href="/auth/login" style={{ fontSize: 14, textDecoration: 'none', color: 'var(--primary)', fontWeight: 600 }}>
+                    Đăng nhập
+                  </Link>
+                  <Link href="/auth/register" style={{ fontSize: 14, textDecoration: 'none', background: 'var(--primary)', color: '#fff', padding: '0.5rem 1rem', borderRadius: 6, fontWeight: 600 }}>
+                    Đăng ký
+                  </Link>
+                </>
+              )}
+            </>
+          )}
         </div>
-      </header>
+      </nav>
       {/* Hero Section */}
       <section style={{ padding: '3rem 1.5rem 2.5rem', background: 'linear-gradient(120deg, #e0e7ff 0%, #f8fafc 100%)' }}>
         <div style={{ maxWidth: 900, margin: '0 auto', textAlign: 'center' }}>
