@@ -5,7 +5,7 @@ import { db } from '@/lib/db';
 
 export async function GET() {
   try {
-    const cookieStore = cookies();
+    const cookieStore = await cookies();
     const token = cookieStore.get('auth_token')?.value;
     if (!token) return NextResponse.json({ user: null }, { status: 401 });
 
