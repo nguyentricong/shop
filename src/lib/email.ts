@@ -1,14 +1,26 @@
-import { Resend } from 'resend';
+import nodemailer from 'nodemailer';
 
-// Lazily create the Resend client so missing env vars do not crash module evaluation
-let resendClient: Resend | null = null;
+// Lazily create SMTP transporter so missing env vars do not crash module evaluation
+let transporter: nodemailer.Transporter | null = null;
 
-function getResendClient(): Resend | null {
-  if (resendClient) return resendClient;
-  const apiKey = process.env.RESEND_API_KEY;
-  if (!apiKey) return null;
-  resendClient = new Resend(apiKey);
-  return resendClient;
+function getTransporter(): nodemailer.Transporter | null {
+  if (transporter) return transporter;
+
+  const host = process.env.SMTP_HOST;
+  const port = process.env.SMTP_PORT ? Number(process.env.SMTP_PORT) : undefined;
+  const user = process.env.SMTP_USER;
+  const pass = process.env.SMTP_PASS;
+
+  if (!host || !port || !user || !pass) return null;
+
+  transporter = nodemailer.createTransport({
+    host,
+    port,
+    secure: port === 465, // Gmail app password typically uses 465
+    auth: { user, pass }
+  });
+
+  return transporter;
 }
 
 interface EmailParams {
@@ -19,17 +31,18 @@ interface EmailParams {
 }
 
 export async function sendLicenseEmail({ to, name, licenseKey, downloadUrl }: EmailParams) {
-  const client = getResendClient();
+  const client = getTransporter();
   if (!client) {
-    const error = new Error('RESEND_API_KEY is missing');
+    const error = new Error('SMTP configuration is missing');
     console.error(error.message);
     return { success: false, error };
   }
 
   try {
-    const { data, error } = await client.emails.send({
-      from: 'AdBlock Pro <noreply@yourdomain.com>',
-      to: [to],
+    const from = process.env.SMTP_FROM || 'AdBlock Pro <no-reply@example.com>';
+    const info = await client.sendMail({
+      from,
+      to,
       subject: '🎉 License Key AdBlock Pro của bạn đã sẵn sàng!',
       html: `
 <!DOCTYPE html>
@@ -118,13 +131,8 @@ export async function sendLicenseEmail({ to, name, licenseKey, downloadUrl }: Em
       `
     });
 
-    if (error) {
-      console.error('Error sending email:', error);
-      return { success: false, error };
-    }
-
-    console.log('Email sent successfully:', data);
-    return { success: true, data };
+    console.log('Email sent successfully:', info.messageId);
+    return { success: true, data: info };
   } catch (error) {
     console.error('Email service error:', error);
     return { success: false, error };
