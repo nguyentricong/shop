@@ -17,7 +17,7 @@ export const nameSchema = z.string()
 
 // Payment method validation
 export const paymentMethodSchema = z.enum(['momo', 'vnpay', 'bank', 'stripe'], {
-  errorMap: () => ({ message: 'Phương thức thanh toán không hợp lệ' })
+  message: 'Phương thức thanh toán không hợp lệ'
 });
 
 // Purchase request schema
