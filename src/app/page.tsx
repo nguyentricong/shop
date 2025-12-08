@@ -5,39 +5,39 @@ import { Lock, Zap, CheckCircle, Shield, Headphones, Award } from 'lucide-react'
 
 export default function Home() {
   return (
-    <div style={{ minHeight: '80vh', background: 'var(--background)' }}>
+    <div style={{ minHeight: '100vh', background: 'var(--background)' }}>
       {/* Hero Section */}
-      <section style={{ padding: '5rem 0 3rem', background: 'linear-gradient(120deg, #e0e7ff 0%, #f8fafc 100%)' }}>
+      <section style={{ padding: '3rem 1.5rem 2.5rem', background: 'linear-gradient(120deg, #e0e7ff 0%, #f8fafc 100%)' }}>
         <div style={{ maxWidth: 900, margin: '0 auto', textAlign: 'center' }}>
-          <h1 style={{ fontSize: '3.5rem', fontWeight: 800, color: 'var(--foreground)', marginBottom: 24, lineHeight: 1.1 }}>
+          <h1 style={{ fontSize: '2.75rem', fontWeight: 800, color: 'var(--foreground)', marginBottom: 16, lineHeight: 1.2 }}>
             Xem Video <span className="accent">Sạch Sẽ</span>
           </h1>
-          <p style={{ fontSize: '1.3rem', color: '#475569', marginBottom: 32, maxWidth: 600, margin: '0 auto' }}>
+          <p style={{ fontSize: '1.1rem', color: '#475569', marginBottom: 24, maxWidth: 600, margin: '0 auto 24px' }}>
             Tiện ích chặn quảng cáo mạnh mẽ nhất cho YouTube, Facebook và web. Nhanh, an toàn, 100% riêng tư.
           </p>
-          <div style={{ display: 'flex', flexDirection: 'row', gap: 16, justifyContent: 'center', marginBottom: 32 }}>
-            <Link href="/buy" className="btn-primary" style={{ textDecoration: 'none', fontSize: 20 }}>
-              Mua Ngay - 49,000₫
+          <div style={{ display: 'flex', flexDirection: 'row', gap: 12, justifyContent: 'center', marginBottom: 24, flexWrap: 'wrap' }}>
+            <Link href="/buy" className="btn-primary" style={{ textDecoration: 'none', fontSize: 16, padding: '0.75rem 2rem', fontWeight: 700, boxShadow: '0 4px 16px rgba(37, 99, 235, 0.3)' }}>
+              🎁 Mua Ngay - 49,000₫
             </Link>
-            <button className="btn-primary" style={{ background: 'var(--accent)', fontSize: 20 }}>
-              Xem Demo
+            <button className="btn-primary" style={{ background: 'var(--accent)', fontSize: 16, padding: '0.75rem 2rem' }}>
+              ▶ Xem Demo
             </button>
           </div>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 24, justifyContent: 'center', marginTop: 32 }}>
-            <div className="card" style={{ minWidth: 220 }}>
-              <Shield style={{ color: 'var(--primary)', width: 32, height: 32, marginBottom: 8 }} />
-              <div style={{ fontWeight: 700, fontSize: 18 }}>Bảo mật tuyệt đối</div>
-              <div style={{ color: '#64748b', fontSize: 15 }}>Không lưu dữ liệu cá nhân, bảo vệ quyền riêng tư.</div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 16, marginTop: 24 }}>
+            <div className="card" style={{ padding: '1.5rem 1rem', borderLeft: '4px solid var(--primary)' }}>
+              <Shield style={{ color: 'var(--primary)', width: 28, height: 28, marginBottom: 8 }} />
+              <div style={{ fontWeight: 700, fontSize: 16 }}>🔒 Bảo mật</div>
+              <div style={{ color: '#64748b', fontSize: 13 }}>Không lưu dữ liệu</div>
             </div>
-            <div className="card" style={{ minWidth: 220 }}>
-              <Zap style={{ color: 'var(--accent)', width: 32, height: 32, marginBottom: 8 }} />
-              <div style={{ fontWeight: 700, fontSize: 18 }}>Tốc độ vượt trội</div>
-              <div style={{ color: '#64748b', fontSize: 15 }}>Không làm chậm máy, tối ưu cho mọi trình duyệt.</div>
+            <div className="card" style={{ padding: '1.5rem 1rem', borderLeft: '4px solid var(--accent)' }}>
+              <Zap style={{ color: 'var(--accent)', width: 28, height: 28, marginBottom: 8 }} />
+              <div style={{ fontWeight: 700, fontSize: 16 }}>⚡ Tốc độ</div>
+              <div style={{ color: '#64748b', fontSize: 13 }}>Không làm chậm</div>
             </div>
-            <div className="card" style={{ minWidth: 220 }}>
-              <CheckCircle style={{ color: 'var(--success)', width: 32, height: 32, marginBottom: 8 }} />
-              <div style={{ fontWeight: 700, fontSize: 18 }}>Hiệu quả 100%</div>
-              <div style={{ color: '#64748b', fontSize: 15 }}>Chặn sạch quảng cáo, trải nghiệm liền mạch.</div>
+            <div className="card" style={{ padding: '1.5rem 1rem', borderLeft: '4px solid var(--success)' }}>
+              <CheckCircle style={{ color: 'var(--success)', width: 28, height: 28, marginBottom: 8 }} />
+              <div style={{ fontWeight: 700, fontSize: 16 }}>✅ Hiệu quả</div>
+              <div style={{ color: '#64748b', fontSize: 13 }}>Chặn 99.9%</div>
             </div>
           </div>
         </div>
@@ -45,46 +45,46 @@ export default function Home() {
       {/* ...các phần khác giữ nguyên... */}
 
       {/* Stats */}
-      <section style={{ background: '#f8fafc', color: 'var(--foreground)', padding: '3rem 2rem' }}>
+      <section style={{ background: '#f8fafc', color: 'var(--foreground)', padding: '2rem 1.5rem' }}>
         <div style={{ maxWidth: 1200, margin: '0 auto' }}>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 32, textAlign: 'center' }}>
-            <div>
-              <div style={{ fontSize: '2.5rem', fontWeight: 800, marginBottom: 8, color: 'var(--primary)' }}>100K+</div>
-              <div style={{ fontSize: 14, opacity: 0.7 }}>Người dùng tin tưởng</div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: 16, textAlign: 'center' }}>
+            <div style={{ padding: '12px 8px', borderRadius: 8, background: '#fff', border: '1px solid #e2e8f0' }}>
+              <div style={{ fontSize: '1.75rem', fontWeight: 800, marginBottom: 4, color: 'var(--primary)' }}>100K+</div>
+              <div style={{ fontSize: 12, opacity: 0.7, fontWeight: 500 }}>🎉 Người mua</div>
             </div>
-            <div>
-              <div style={{ fontSize: '2.5rem', fontWeight: 800, marginBottom: 8, color: 'var(--primary)' }}>99.9%</div>
-              <div style={{ fontSize: 14, opacity: 0.7 }}>Quảng cáo bị chặn</div>
+            <div style={{ padding: '12px 8px', borderRadius: 8, background: '#fff', border: '1px solid #e2e8f0' }}>
+              <div style={{ fontSize: '1.75rem', fontWeight: 800, marginBottom: 4, color: 'var(--primary)' }}>99.9%</div>
+              <div style={{ fontSize: 12, opacity: 0.7, fontWeight: 500 }}>✅ Chặn quảng cáo</div>
             </div>
-            <div>
-              <div style={{ fontSize: '2.5rem', fontWeight: 800, marginBottom: 8, color: 'var(--primary)' }}>60%</div>
-              <div style={{ fontSize: 14, opacity: 0.7 }}>Trang tải nhanh hơn</div>
+            <div style={{ padding: '12px 8px', borderRadius: 8, background: '#fff', border: '1px solid #e2e8f0' }}>
+              <div style={{ fontSize: '1.75rem', fontWeight: 800, marginBottom: 4, color: 'var(--primary)' }}>60%</div>
+              <div style={{ fontSize: 12, opacity: 0.7, fontWeight: 500 }}>⚡ Tải nhanh hơn</div>
             </div>
-            <div>
-              <div style={{ fontSize: '2.5rem', fontWeight: 800, marginBottom: 8, color: 'var(--primary)' }}>5★</div>
-              <div style={{ fontSize: 14, opacity: 0.7 }}>Đánh giá trung bình</div>
+            <div style={{ padding: '12px 8px', borderRadius: 8, background: '#fff', border: '1px solid #e2e8f0' }}>
+              <div style={{ fontSize: '1.75rem', fontWeight: 800, marginBottom: 4, color: 'var(--success)' }}>5★</div>
+              <div style={{ fontSize: 12, opacity: 0.7, fontWeight: 500 }}>⭐ Đánh giá</div>
             </div>
           </div>
         </div>
       </section>
 
       {/* Features */}
-      <section style={{ padding: '4rem 2rem', background: 'var(--background)' }}>
+      <section style={{ padding: '2rem 1.5rem', background: 'var(--background)' }}>
         <div style={{ maxWidth: 1200, margin: '0 auto' }}>
-          <h2 style={{ fontSize: '2.25rem', fontWeight: 800, textAlign: 'center', marginBottom: 48, color: 'var(--foreground)' }}>✨ Tính Năng Chính</h2>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: 32 }}>
+          <h2 style={{ fontSize: '1.75rem', fontWeight: 800, textAlign: 'center', marginBottom: 24, color: 'var(--foreground)' }}>✨ Tính Năng</h2>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 16 }}>
             {[
-              { icon: Zap, title: 'Siêu Nhanh', desc: 'Không làm chậm trình duyệt của bạn' },
-              { icon: Lock, title: 'An Toàn', desc: 'Bảo vệ quyền riêng tư 100%' },
-              { icon: Headphones, title: 'Hỗ Trợ 24/7', desc: 'Tiếng Việt sẵn sàng giúp bạn' },
+              { icon: Zap, title: 'Siêu Nhanh', desc: 'Không làm chậm trình duyệt' },
+              { icon: Lock, title: 'An Toàn', desc: 'Bảo vệ quyền riêng tư' },
+              { icon: Headphones, title: 'Hỗ Trợ 24/7', desc: 'Tiếng Việt sẵn sàng' },
               { icon: Award, title: 'Trọn Đời', desc: 'Mua 1 lần dùng vĩnh viễn' },
             ].map((item, i) => (
-              <div key={i} className="card" style={{ textAlign: 'center', padding: '2rem', borderRadius: 16 }}>
-                <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 80, height: 80, background: 'var(--primary)', borderRadius: '50%', marginBottom: 24 }}>
-                  <item.icon style={{ width: 40, height: 40, color: '#fff' }} />
+              <div key={i} className="card" style={{ textAlign: 'center', padding: '1.25rem 1rem', borderRadius: 12 }}>
+                <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 56, height: 56, background: 'var(--primary)', borderRadius: '50%', marginBottom: 12 }}>
+                  <item.icon style={{ width: 32, height: 32, color: '#fff' }} />
                 </div>
-                <h3 style={{ fontWeight: 700, fontSize: 18, color: 'var(--foreground)', marginBottom: 12 }}>{item.title}</h3>
-                <p style={{ color: '#64748b', fontSize: 15, lineHeight: 1.6 }}>{item.desc}</p>
+                <h3 style={{ fontWeight: 700, fontSize: 14, color: 'var(--foreground)', marginBottom: 6 }}>{item.title}</h3>
+                <p style={{ color: '#64748b', fontSize: 12, lineHeight: 1.5 }}>{item.desc}</p>
               </div>
             ))}
           </div>
@@ -92,26 +92,26 @@ export default function Home() {
       </section>
 
       {/* Comparison */}
-      <section style={{ background: '#fff', padding: '4rem 2rem' }}>
+      <section style={{ background: '#fff', padding: '2rem 1.5rem' }}>
         <div style={{ maxWidth: 1200, margin: '0 auto' }}>
-          <h2 style={{ fontSize: '2.25rem', fontWeight: 800, textAlign: 'center', marginBottom: 48, color: 'var(--foreground)' }}>⚖️ So Sánh</h2>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 32 }}>
-            <div style={{ background: '#fff', borderRadius: 20, padding: 32, border: '2px solid #fecaca', boxShadow: '0 4px 24px rgba(30,41,59,0.08)' }}>
-              <h3 style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--foreground)', marginBottom: 24 }}>❌ Không Có AdBlock</h3>
+          <h2 style={{ fontSize: '1.75rem', fontWeight: 800, textAlign: 'center', marginBottom: 24, color: 'var(--foreground)' }}>⚖️ So Sánh</h2>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 20 }}>
+            <div style={{ background: '#fff', borderRadius: 12, padding: 20, border: '2px solid #fecaca', boxShadow: '0 2px 8px rgba(30,41,59,0.04)' }}>
+              <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: 'var(--foreground)', marginBottom: 16 }}>❌ Không AdBlock</h3>
               <ul style={{ listStyle: 'none', padding: 0 }}>
-                {['Quảng cáo che màn hình', 'Phải chờ 5-15 giây', 'Âm thanh khó chịu', 'Trang tải chậm'].map((item, i) => (
-                  <li key={i} style={{ display: 'flex', gap: 12, color: '#475569', marginBottom: 16, fontSize: 15 }}>
+                {['Quảng cáo che màn hình', 'Chờ 5-15s', 'Âm thanh khó chịu', 'Trang tải chậm'].map((item, i) => (
+                  <li key={i} style={{ display: 'flex', gap: 8, color: '#475569', marginBottom: 10, fontSize: 13 }}>
                     <span style={{ color: 'var(--danger)', fontWeight: 700, flexShrink: 0 }}>✗</span>
                     <span>{item}</span>
                   </li>
                 ))}
               </ul>
             </div>
-            <div style={{ background: '#fff', borderRadius: 20, padding: 32, border: '2px solid #bbf7d0', boxShadow: '0 4px 24px rgba(30,41,59,0.08)' }}>
-              <h3 style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--foreground)', marginBottom: 24 }}>✅ Có AdBlock Pro</h3>
+            <div style={{ background: '#fff', borderRadius: 12, padding: 20, border: '2px solid #bbf7d0', boxShadow: '0 2px 8px rgba(30,41,59,0.04)' }}>
+              <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: 'var(--foreground)', marginBottom: 16 }}>✅ Có AdBlock Pro</h3>
               <ul style={{ listStyle: 'none', padding: 0 }}>
-                {['Không quảng cáo', 'Xem ngay lập tức', 'Yên tĩnh', 'Trang tải nhanh 60%'].map((item, i) => (
-                  <li key={i} style={{ display: 'flex', gap: 12, color: '#475569', marginBottom: 16, fontSize: 15 }}>
+                {['Không quảng cáo', 'Xem ngay', 'Yên tĩnh', 'Tải nhanh 60%'].map((item, i) => (
+                  <li key={i} style={{ display: 'flex', gap: 8, color: '#475569', marginBottom: 10, fontSize: 13 }}>
                     <span style={{ color: 'var(--success)', fontWeight: 700, flexShrink: 0 }}>✓</span>
                     <span>{item}</span>
                   </li>
@@ -123,22 +123,25 @@ export default function Home() {
       </section>
 
       {/* Pricing */}
-      <section style={{ padding: '4rem 2rem', background: '#f8fafc' }}>
-        <div style={{ maxWidth: 700, margin: '0 auto' }}>
-          <h2 style={{ fontSize: '2.25rem', fontWeight: 800, textAlign: 'center', marginBottom: 48, color: 'var(--foreground)' }}>💰 Giá Cả</h2>
-          <div style={{ background: 'linear-gradient(135deg, var(--primary) 0%, #1e40af 100%)', color: '#fff', borderRadius: 24, padding: 48, textAlign: 'center', boxShadow: '0 20px 40px rgba(37, 99, 235, 0.2)' }}>
-            <div style={{ fontSize: '4rem', fontWeight: 800, marginBottom: 12 }}>49,000₫</div>
-            <p style={{ fontSize: '1.1rem', opacity: 0.9, marginBottom: 32, lineHeight: 1.6 }}>Mua 1 lần, dùng vĩnh viễn trên tất cả thiết bị</p>
-            <ul style={{ listStyle: 'none', padding: 0, marginBottom: 32, textAlign: 'left', maxWidth: 400, margin: '0 auto 2rem' }}>
-              {['Chặn 99.9% quảng cáo', 'Cập nhật miễn phí vĩnh viễn', 'Hoàn tiền 7 ngày', 'Hỗ trợ 24/7'].map((item, i) => (
-                <li key={i} style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16, fontSize: 16 }}>
-                  <CheckCircle style={{ width: 24, height: 24, flexShrink: 0 }} />
+      <section style={{ padding: '2rem 1.5rem', background: '#f8fafc' }}>
+        <div style={{ maxWidth: 600, margin: '0 auto' }}>
+          <h2 style={{ fontSize: '1.75rem', fontWeight: 800, textAlign: 'center', marginBottom: 24, color: 'var(--foreground)' }}>💰 Giá Cả</h2>
+          <div style={{ background: 'linear-gradient(135deg, var(--primary) 0%, #1e40af 100%)', color: '#fff', borderRadius: 16, padding: 32, textAlign: 'center', boxShadow: '0 10px 30px rgba(37, 99, 235, 0.15)' }}>
+            <div style={{ fontSize: '3rem', fontWeight: 800, marginBottom: 8 }}>49,000₫</div>
+            <p style={{ fontSize: '0.95rem', opacity: 0.9, marginBottom: 20, lineHeight: 1.5 }}>Mua 1 lần, dùng vĩnh viễn</p>
+            <ul style={{ listStyle: 'none', padding: 0, marginBottom: 24, textAlign: 'left', maxWidth: 300, margin: '0 auto 20px' }}>
+              {['✓ Chặn 99.9% quảng cáo', '✓ Cập nhật miễn phí', '✓ Hoàn tiền 7 ngày', '✓ Hỗ trợ 24/7 Tiếng Việt'].map((item, i) => (
+                <li key={i} style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12, fontSize: 14 }}>
+                  <span style={{ color: 'var(--success)', fontWeight: 700 }}>◆</span>
                   <span>{item}</span>
                 </li>
               ))}
             </ul>
-            <Link href="/buy" className="btn-primary" style={{ textDecoration: 'none', background: '#fff', color: 'var(--primary)', fontSize: 18, padding: '0.75rem 2rem', display: 'inline-block', fontWeight: 700 }}>
-              Thanh Toán Ngay →
+            <div style={{ background: 'rgba(255,255,255,0.15)', padding: '12px 16px', borderRadius: 8, marginBottom: 20, fontSize: 13, fontWeight: 600 }}>
+              🔥 Hơn 100,000 người đã mua • 5★ Đánh giá
+            </div>
+            <Link href="/buy" className="btn-primary" style={{ textDecoration: 'none', background: '#fff', color: 'var(--primary)', fontSize: 16, padding: '0.7rem 2rem', display: 'inline-block', fontWeight: 700, boxShadow: '0 8px 20px rgba(0,0,0,0.15)' }}>
+              💰 Mua Ngay - 49K₫
             </Link>
           </div>
         </div>
@@ -168,48 +171,53 @@ export default function Home() {
       </section>
 
       {/* CTA */}
-      <section style={{ background: 'linear-gradient(135deg, var(--primary) 0%, #1e40af 100%)', color: '#fff', padding: '5rem 2rem', textAlign: 'center' }}>
-        <div style={{ maxWidth: 700, margin: '0 auto' }}>
-          <h2 style={{ fontSize: '2.5rem', fontWeight: 800, marginBottom: 24 }}>Sẵn Sàng Chặn Quảng Cáo?</h2>
-          <p style={{ fontSize: '1.1rem', opacity: 0.9, marginBottom: 32, lineHeight: 1.6 }}>Hơn 100,000 người dùng đang xem video mà không quảng cáo. Hãy tham gia cộng đồng ngay hôm nay!</p>
-          <Link href="/buy" className="btn-primary" style={{ textDecoration: 'none', background: '#fff', color: 'var(--primary)', fontSize: 18, padding: '1rem 2.5rem', display: 'inline-block' }}>
-            Mua Ngay - 49,000₫ →
+      <section style={{ background: 'linear-gradient(135deg, var(--primary) 0%, #1e40af 100%)', color: '#fff', padding: '2.5rem 1.5rem', textAlign: 'center', position: 'relative', overflow: 'hidden' }}>
+        <div style={{ position: 'absolute', top: 0, right: 0, width: '300px', height: '300px', background: 'rgba(255,255,255,0.1)', borderRadius: '50%', transform: 'translate(50%, -50%)' }}></div>
+        <div style={{ maxWidth: 600, margin: '0 auto', position: 'relative', zIndex: 1 }}>
+          <div style={{ fontSize: 24, marginBottom: 8 }}>🚀</div>
+          <h2 style={{ fontSize: '1.75rem', fontWeight: 800, marginBottom: 12 }}>Sẵn Sàng Chặn Quảng Cáo?</h2>
+          <p style={{ fontSize: '0.95rem', opacity: 0.95, marginBottom: 20, lineHeight: 1.5, fontWeight: 500 }}>
+            <span style={{ background: 'rgba(255,255,255,0.2)', padding: '4px 8px', borderRadius: 4, display: 'inline-block', marginRight: 8 }}>⏰ Chỉ 49,000₫</span>
+            <span style={{ background: 'rgba(255,255,255,0.2)', padding: '4px 8px', borderRadius: 4, display: 'inline-block' }}>♾️ Dùng Vĩnh Viễn</span>
+          </p>
+          <Link href="/buy" className="btn-primary" style={{ textDecoration: 'none', background: '#fff', color: 'var(--primary)', fontSize: 16, padding: '0.7rem 2.5rem', display: 'inline-block', fontWeight: 700, boxShadow: '0 8px 24px rgba(0,0,0,0.2)' }}>
+            ⭐ Mua Ngay Với Hoàn Tiền 7 Ngày
           </Link>
         </div>
       </section>
 
       {/* Footer */}
-      <footer style={{ background: '#1e293b', color: '#cbd5e1', padding: '3rem 2rem 2rem', borderTop: '1px solid #334155' }}>
+      <footer style={{ background: '#f1f5f9', color: '#475569', padding: '2rem 1.5rem', borderTop: '1px solid #e2e8f0' }}>
         <div style={{ maxWidth: 1200, margin: '0 auto' }}>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: 32, marginBottom: 32 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 20, marginBottom: 20 }}>
             <div>
-              <h4 style={{ color: '#fff', fontWeight: 700, marginBottom: 16, fontSize: 18 }}>🛡️ AdBlock Pro</h4>
-              <p style={{ fontSize: 14, lineHeight: 1.6, opacity: 0.8 }}>Giải pháp chặn quảng cáo chuyên nghiệp, uy tín và sạch sẽ cho người dùng Việt Nam.</p>
+              <h4 style={{ color: 'var(--foreground)', fontWeight: 700, marginBottom: 12, fontSize: 15 }}>🛡️ AdBlock Pro</h4>
+              <p style={{ fontSize: 13, lineHeight: 1.5, opacity: 0.8 }}>Chặn quảng cáo chuyên nghiệp, uy tín và sạch sẽ.</p>
             </div>
             <div>
-              <h4 style={{ color: '#fff', fontWeight: 700, marginBottom: 16, fontSize: 18 }}>Công Ty</h4>
+              <h4 style={{ color: 'var(--foreground)', fontWeight: 700, marginBottom: 12, fontSize: 15 }}>Công Ty</h4>
               <ul style={{ listStyle: 'none', padding: 0 }}>
-                <li style={{ marginBottom: 8 }}><a href="#" style={{ color: '#cbd5e1', textDecoration: 'none', transition: '0.2s' }} onMouseEnter={(e) => e.target.style.color = '#fff'} onMouseLeave={(e) => e.target.style.color = '#cbd5e1'}>Về chúng tôi</a></li>
-                <li style={{ marginBottom: 8 }}><a href="#" style={{ color: '#cbd5e1', textDecoration: 'none', transition: '0.2s' }} onMouseEnter={(e) => e.target.style.color = '#fff'} onMouseLeave={(e) => e.target.style.color = '#cbd5e1'}>Blog</a></li>
+                <li style={{ marginBottom: 6 }}><a href="#" style={{ color: '#475569', textDecoration: 'none', fontSize: 13 }} onMouseEnter={(e) => e.target.style.color = 'var(--primary)'} onMouseLeave={(e) => e.target.style.color = '#475569'}>Về chúng tôi</a></li>
+                <li><a href="#" style={{ color: '#475569', textDecoration: 'none', fontSize: 13 }} onMouseEnter={(e) => e.target.style.color = 'var(--primary)'} onMouseLeave={(e) => e.target.style.color = '#475569'}>Blog</a></li>
               </ul>
             </div>
             <div>
-              <h4 style={{ color: '#fff', fontWeight: 700, marginBottom: 16, fontSize: 18 }}>Hỗ Trợ</h4>
+              <h4 style={{ color: 'var(--foreground)', fontWeight: 700, marginBottom: 12, fontSize: 15 }}>Hỗ Trợ</h4>
               <ul style={{ listStyle: 'none', padding: 0 }}>
-                <li style={{ marginBottom: 8 }}><a href="#" style={{ color: '#cbd5e1', textDecoration: 'none', transition: '0.2s' }} onMouseEnter={(e) => e.target.style.color = '#fff'} onMouseLeave={(e) => e.target.style.color = '#cbd5e1'}>Liên hệ</a></li>
-                <li style={{ marginBottom: 8 }}><a href="#" style={{ color: '#cbd5e1', textDecoration: 'none', transition: '0.2s' }} onMouseEnter={(e) => e.target.style.color = '#fff'} onMouseLeave={(e) => e.target.style.color = '#cbd5e1'}>FAQ</a></li>
+                <li style={{ marginBottom: 6 }}><a href="/dashboard" style={{ color: '#475569', textDecoration: 'none', fontSize: 13, transition: 'color 0.2s' }} onMouseEnter={(e) => (e.currentTarget as HTMLAnchorElement).style.color = 'var(--primary)'} onMouseLeave={(e) => (e.currentTarget as HTMLAnchorElement).style.color = '#475569'}>Dashboard</a></li>
+                <li><a href="#" style={{ color: '#475569', textDecoration: 'none', fontSize: 13, transition: 'color 0.2s' }} onMouseEnter={(e) => (e.currentTarget as HTMLAnchorElement).style.color = 'var(--primary)'} onMouseLeave={(e) => (e.currentTarget as HTMLAnchorElement).style.color = '#475569'}>FAQ</a></li>
               </ul>
             </div>
             <div>
-              <h4 style={{ color: '#fff', fontWeight: 700, marginBottom: 16, fontSize: 18 }}>Pháp Lý</h4>
+              <h4 style={{ color: 'var(--foreground)', fontWeight: 700, marginBottom: 12, fontSize: 15 }}>Pháp Lý</h4>
               <ul style={{ listStyle: 'none', padding: 0 }}>
-                <li style={{ marginBottom: 8 }}><a href="#" style={{ color: '#cbd5e1', textDecoration: 'none', transition: '0.2s' }} onMouseEnter={(e) => e.target.style.color = '#fff'} onMouseLeave={(e) => e.target.style.color = '#cbd5e1'}>Điều khoản</a></li>
-                <li style={{ marginBottom: 8 }}><a href="#" style={{ color: '#cbd5e1', textDecoration: 'none', transition: '0.2s' }} onMouseEnter={(e) => e.target.style.color = '#fff'} onMouseLeave={(e) => e.target.style.color = '#cbd5e1'}>Quyền riêng tư</a></li>
+                <li style={{ marginBottom: 6 }}><a href="#" style={{ color: '#475569', textDecoration: 'none', fontSize: 13 }} onMouseEnter={(e) => e.target.style.color = 'var(--primary)'} onMouseLeave={(e) => e.target.style.color = '#475569'}>Điều khoản</a></li>
+                <li><a href="#" style={{ color: '#475569', textDecoration: 'none', fontSize: 13 }} onMouseEnter={(e) => e.target.style.color = 'var(--primary)'} onMouseLeave={(e) => e.target.style.color = '#475569'}>Quyền riêng tư</a></li>
               </ul>
             </div>
           </div>
-          <div style={{ borderTop: '1px solid #334155', paddingTop: 24, textAlign: 'center', fontSize: 13, opacity: 0.7 }}>
-            <p>© 2025 AdBlock Pro. Uy tín • Sạch sẽ • Hiện đại. All rights reserved.</p>
+          <div style={{ borderTop: '1px solid #e2e8f0', paddingTop: 16, textAlign: 'center', fontSize: 12, opacity: 0.7 }}>
+            <p>© 2025 AdBlock Pro. Uy tín • Sạch sẽ • Hiện đại</p>
           </div>
         </div>
       </footer>

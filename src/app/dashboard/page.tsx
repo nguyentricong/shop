@@ -1,24 +1,65 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Copy, Download, Eye, EyeOff } from 'lucide-react';
+import { Copy, Eye, EyeOff } from 'lucide-react';
 
 export default function DashboardPage() {
   const [showKey, setShowKey] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [orders, setOrders] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  // Mock data - trong thực tế sẽ lấy từ API
-  const orders = [
-    {
-      id: '1',
-      date: '2025-01-09',
-      product: 'AdBlock Pro - Lifetime',
-      amount: '49,000₫',
-      status: 'completed',
-      licenseKey: 'ADBLOCK-PRO-ABC123DEF456'
+  // Get user email from localStorage or use mock
+  const userEmail = typeof window !== 'undefined' ? localStorage.getItem('userEmail') || 'user@example.com' : 'user@example.com';
+  const userName = typeof window !== 'undefined' ? localStorage.getItem('userName') || 'Nguyễn Văn A' : 'Nguyễn Văn A';
+
+  useEffect(() => {
+    fetchOrders();
+  }, []);
+
+  async function fetchOrders() {
+    try {
+      const response = await fetch(`/api/orders?email=${encodeURIComponent(userEmail)}`);
+      
+      if (!response.ok) {
+        throw new Error(`API responded with status ${response.status}`);
+      }
+      
+      const data = await response.json();
+      
+      if (data.success && data.orders) {
+        setOrders(data.orders);
+      } else {
+        // Use mock data if no orders
+        setOrders([
+          {
+            id: '1',
+            date: '2025-01-09',
+            product: 'AdBlock Pro - Lifetime',
+            amount: '49,000₫',
+            status: 'completed',
+            licenseKey: 'ADBLOCK-PRO-ABC123DEF456'
+          }
+        ]);
+      }
+    } catch (error) {
+      console.error('Failed to fetch orders:', error);
+      // Fallback to mock data if API fails
+      setOrders([
+        {
+          id: '1',
+          date: '2025-01-09',
+          product: 'AdBlock Pro - Lifetime',
+          amount: '49,000₫',
+          status: 'completed',
+          licenseKey: 'ADBLOCK-PRO-ABC123DEF456'
+        }
+      ]);
+    } finally {
+      setLoading(false);
     }
-  ];
+  }
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
@@ -27,90 +68,89 @@ export default function DashboardPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-600 to-purple-700">
+    <>
       {/* Header */}
-      <nav className="bg-black/30 backdrop-blur-md border-b border-white/10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
-          <h1 className="text-2xl font-bold text-white">📊 Dashboard</h1>
-          <Link href="/" className="text-gray-300 hover:text-white transition">
-            Trang Chủ
-          </Link>
+      <header style={{ width: '100%', background: 'var(--primary)', color: '#fff', boxShadow: '0 2px 8px rgba(30,41,59,0.08)', padding: '0.5rem 0', position: 'fixed', top: 0, left: 0, right: 0, zIndex: 1000 }}>
+        <div style={{ maxWidth: 1200, margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 2rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <span style={{ fontWeight: 700, fontSize: 22, letterSpacing: 1 }}>AdBlock Pro</span>
+            <span style={{ fontSize: 14, opacity: 0.8 }}>Chặn 100% Quảng Cáo YouTube & Facebook</span>
+          </div>
+          <Link href="/" style={{ textDecoration: 'none', color: '#fff', fontWeight: 600, fontSize: 14 }}>← Trang Chủ</Link>
         </div>
-      </nav>
-
-      {/* Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      </header>
+      <div style={{ maxWidth: 1200, margin: '0 auto', padding: '6rem 1.5rem 2rem' }}>
         {/* User Info */}
-        <div className="bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 p-8 mb-8">
-          <h2 className="text-3xl font-bold text-white mb-2">Xin chào, Nguyễn Văn A! 👋</h2>
-          <p className="text-gray-300">Email: user@example.com</p>
-          <p className="text-gray-300">Thành viên kể từ: 2025-01-09</p>
+        <div style={{ background: '#fff', borderRadius: 12, border: '1px solid #e2e8f0', padding: 24, marginBottom: 24 }}>
+          <h2 style={{ fontSize: '1.75rem', fontWeight: 800, color: 'var(--foreground)', marginBottom: 8 }}>Xin chào, {userName}! 👋</h2>
+          <p style={{ color: '#475569', marginBottom: 4 }}>Email: {userEmail}</p>
+          <p style={{ color: '#475569' }}>Thành viên kể từ: {new Date().toLocaleDateString('vi-VN')}</p>
         </div>
 
         {/* Stats */}
-        <div className="grid md:grid-cols-3 gap-6 mb-8">
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 16, marginBottom: 24 }}>
           {[
             { label: 'Tổng Chi Tiêu', value: '49,000₫', icon: '💰' },
             { label: 'Licenses Hoạt Động', value: '1', icon: '✓' },
             { label: 'Hỗ Trợ', value: '24/7', icon: '🎧' }
           ].map((stat, i) => (
-            <div key={i} className="bg-white/10 backdrop-blur-md rounded-xl border border-white/20 p-6">
-              <div className="text-3xl mb-2">{stat.icon}</div>
-              <p className="text-gray-300 text-sm">{stat.label}</p>
-              <p className="text-2xl font-bold text-white">{stat.value}</p>
+            <div key={i} style={{ background: '#fff', borderRadius: 12, border: '1px solid #e2e8f0', padding: 16 }}>
+              <div style={{ fontSize: 24, marginBottom: 8 }}>{stat.icon}</div>
+              <p style={{ color: '#64748b', fontSize: 13, marginBottom: 6 }}>{stat.label}</p>
+              <p style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--foreground)' }}>{stat.value}</p>
             </div>
           ))}
         </div>
 
         {/* Orders */}
-        <div className="bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 p-8">
-          <h3 className="text-2xl font-bold text-white mb-6">📜 Lịch Sử Mua Hàng</h3>
+        <div style={{ background: '#fff', borderRadius: 12, border: '1px solid #e2e8f0', padding: 24, marginBottom: 24 }}>
+          <h3 style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--foreground)', marginBottom: 20 }}>📜 Lịch Sử Mua Hàng</h3>
           
-          <div className="overflow-x-auto">
-            <table className="w-full">
+          <div style={{ overflowX: 'auto' }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
               <thead>
-                <tr className="border-b border-white/20">
-                  <th className="text-left text-white py-3 px-4">Ngày</th>
-                  <th className="text-left text-white py-3 px-4">Sản Phẩm</th>
-                  <th className="text-left text-white py-3 px-4">Giá</th>
-                  <th className="text-left text-white py-3 px-4">Trạng Thái</th>
-                  <th className="text-left text-white py-3 px-4">Hành Động</th>
+                <tr style={{ borderBottom: '1px solid #e2e8f0' }}>
+                  <th style={{ textAlign: 'left', color: 'var(--foreground)', fontWeight: 700, padding: '12px 0', fontSize: 13 }}>Ngày</th>
+                  <th style={{ textAlign: 'left', color: 'var(--foreground)', fontWeight: 700, padding: '12px 0', fontSize: 13 }}>Sản Phẩm</th>
+                  <th style={{ textAlign: 'left', color: 'var(--foreground)', fontWeight: 700, padding: '12px 0', fontSize: 13 }}>Giá</th>
+                  <th style={{ textAlign: 'left', color: 'var(--foreground)', fontWeight: 700, padding: '12px 0', fontSize: 13 }}>Trạng Thái</th>
+                  <th style={{ textAlign: 'left', color: 'var(--foreground)', fontWeight: 700, padding: '12px 0', fontSize: 13 }}>Hành Động</th>
                 </tr>
               </thead>
               <tbody>
                 {orders.map((order) => (
-                  <tr key={order.id} className="border-b border-white/10 hover:bg-white/5 transition">
-                    <td className="text-gray-300 py-4 px-4">{order.date}</td>
-                    <td className="text-gray-300 py-4 px-4">{order.product}</td>
-                    <td className="text-gray-300 py-4 px-4 font-semibold">{order.amount}</td>
-                    <td className="py-4 px-4">
-                      <span className="bg-green-500/30 text-green-300 px-3 py-1 rounded-full text-sm font-semibold">
+                  <tr key={order.id} style={{ borderBottom: '1px solid #e2e8f0' }}>
+                    <td style={{ color: '#475569', padding: '12px 0', fontSize: 14 }}>{order.date}</td>
+                    <td style={{ color: '#475569', padding: '12px 0', fontSize: 14 }}>{order.product}</td>
+                    <td style={{ color: '#475569', padding: '12px 0', fontSize: 14, fontWeight: 600 }}>{order.amount}</td>
+                    <td style={{ padding: '12px 0' }}>
+                      <span style={{ background: '#dcfce7', color: '#15803d', padding: '4px 12px', borderRadius: 16, fontSize: 12, fontWeight: 600 }}>
                         ✓ Hoàn Thành
                       </span>
                     </td>
-                    <td className="py-4 px-4">
-                      <details className="relative">
-                        <summary className="cursor-pointer text-blue-400 hover:text-blue-300">
+                    <td style={{ padding: '12px 0' }}>
+                      <details style={{ position: 'relative' }}>
+                        <summary style={{ cursor: 'pointer', color: 'var(--primary)', fontSize: 14, fontWeight: 600 }}>
                           Xem License Key
                         </summary>
-                        <div className="absolute top-full left-0 mt-2 bg-black/50 backdrop-blur-md border border-white/20 rounded-lg p-4 w-80 z-50">
-                          <p className="text-sm text-gray-400 mb-2">License Key:</p>
-                          <div className="bg-white/10 border border-white/20 rounded p-3 mb-3 flex items-center justify-between">
-                            <code className="text-white text-sm font-mono">
-                              {showKey ? order.licenseKey : '••••••••••••••••'}
+                        <div style={{ position: 'absolute', top: '100%', left: 0, marginTop: 8, background: '#fff', border: '1px solid #e2e8f0', borderRadius: 8, padding: 12, width: 280, zIndex: 50, boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}>
+                          <p style={{ color: '#64748b', fontSize: 12, marginBottom: 8 }}>License Key:</p>
+                          <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 6, padding: 8, marginBottom: 12, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                            <code style={{ color: 'var(--foreground)', fontSize: 12, fontFamily: 'monospace' }}>
+                              {showKey ? order.licenseKey : '•••••••••••••••••'}
                             </code>
                             <button
                               onClick={() => setShowKey(!showKey)}
-                              className="text-gray-400 hover:text-white ml-2"
+                              style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#64748b', padding: 0, marginLeft: 8 }}
                             >
-                              {showKey ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                              {showKey ? <EyeOff style={{ width: 16, height: 16 }} /> : <Eye style={{ width: 16, height: 16 }} />}
                             </button>
                           </div>
                           <button
                             onClick={() => copyToClipboard(order.licenseKey)}
-                            className="w-full bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded text-sm transition flex items-center justify-center gap-2"
+                            style={{ width: '100%', background: 'var(--primary)', color: '#fff', padding: '8px 12px', borderRadius: 6, border: 'none', cursor: 'pointer', fontSize: 12, fontWeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}
                           >
-                            <Copy className="w-4 h-4" />
+                            <Copy style={{ width: 14, height: 14 }} />
                             {copied ? 'Đã sao chép!' : 'Sao chép'}
                           </button>
                         </div>
@@ -124,27 +164,27 @@ export default function DashboardPage() {
         </div>
 
         {/* Help Section */}
-        <div className="mt-8 bg-blue-500/20 border border-blue-500/50 rounded-2xl p-8">
-          <h3 className="text-2xl font-bold text-white mb-4">❓ Cần Hỗ Trợ?</h3>
-          <p className="text-gray-300 mb-4">
+        <div style={{ background: '#dbeafe', border: '1px solid #93c5fd', borderRadius: 12, padding: 24 }}>
+          <h3 style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--foreground)', marginBottom: 12 }}>❓ Cần Hỗ Trợ?</h3>
+          <p style={{ color: '#475569', marginBottom: 16 }}>
             Nếu gặp vấn đề kích hoạt license hoặc có câu hỏi, vui lòng liên hệ với chúng tôi
           </p>
-          <div className="flex gap-4">
+          <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
             <a
               href="mailto:support@adblocker.vn"
-              className="bg-white text-blue-600 px-6 py-2 rounded-lg font-semibold hover:bg-gray-100 transition"
+              style={{ background: 'var(--primary)', color: '#fff', padding: '10px 16px', borderRadius: 6, fontWeight: 600, textDecoration: 'none', fontSize: 14 }}
             >
               📧 Email Support
             </a>
             <a
               href="#"
-              className="bg-white/20 text-white px-6 py-2 rounded-lg font-semibold border border-white/50 hover:bg-white/30 transition"
+              style={{ background: '#fff', color: 'var(--primary)', padding: '10px 16px', borderRadius: 6, fontWeight: 600, textDecoration: 'none', fontSize: 14, border: '1px solid var(--primary)' }}
             >
               💬 Chat Support
             </a>
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }
