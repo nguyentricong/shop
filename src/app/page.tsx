@@ -2,10 +2,76 @@
 
 import Link from 'next/link';
 import { Lock, Zap, CheckCircle, Shield, Headphones, Award } from 'lucide-react';
+import { useEffect, useState } from 'react';
+
+interface User {
+  email: string;
+  name: string;
+}
 
 export default function Home() {
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const res = await fetch('/api/auth/me');
+        if (res.ok) {
+          const data = await res.json();
+          setUser(data.user);
+        }
+      } catch (error) {
+        console.error('Auth check failed:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    checkAuth();
+  }, []);
+
+  const handleLogout = async () => {
+    await fetch('/api/auth/logout', { method: 'POST' });
+    setUser(null);
+    window.location.href = '/';
+  };
+
   return (
     <div style={{ minHeight: '100vh', background: 'var(--background)' }}>
+      {/* Header Navbar */}
+      <header style={{ background: '#fff', borderBottom: '1px solid #e2e8f0', padding: '0.75rem 1.5rem', position: 'sticky', top: 0, zIndex: 100 }}>
+        <div style={{ maxWidth: 1200, margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <Link href="/" style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--primary)', textDecoration: 'none' }}>
+            🚀 AdBlock Pro
+          </Link>
+          <nav style={{ display: 'flex', gap: 20, alignItems: 'center' }}>
+            {!loading && (
+              <>
+                {user ? (
+                  <>
+                    <span style={{ fontSize: 14, color: '#475569' }}>👤 {user.name}</span>
+                    <Link href="/dashboard" style={{ fontSize: 14, textDecoration: 'none', color: 'var(--primary)', fontWeight: 600 }}>
+                      Dashboard
+                    </Link>
+                    <button onClick={handleLogout} style={{ fontSize: 14, background: '#f1f5f9', border: '1px solid #cbd5e1', padding: '0.5rem 1rem', borderRadius: 6, cursor: 'pointer', fontWeight: 600 }}>
+                      Đăng xuất
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <Link href="/auth/login" style={{ fontSize: 14, textDecoration: 'none', color: 'var(--primary)', fontWeight: 600 }}>
+                      Đăng nhập
+                    </Link>
+                    <Link href="/auth/register" style={{ fontSize: 14, textDecoration: 'none', background: 'var(--primary)', color: '#fff', padding: '0.5rem 1rem', borderRadius: 6, fontWeight: 600 }}>
+                      Đăng ký
+                    </Link>
+                  </>
+                )}
+              </>
+            )}
+          </nav>
+        </div>
+      </header>
       {/* Hero Section */}
       <section style={{ padding: '3rem 1.5rem 2.5rem', background: 'linear-gradient(120deg, #e0e7ff 0%, #f8fafc 100%)' }}>
         <div style={{ maxWidth: 900, margin: '0 auto', textAlign: 'center' }}>
@@ -19,9 +85,9 @@ export default function Home() {
             <Link href="/buy" className="btn-primary" style={{ textDecoration: 'none', fontSize: 16, padding: '0.75rem 2rem', fontWeight: 700, boxShadow: '0 4px 16px rgba(37, 99, 235, 0.3)' }}>
               🎁 Mua Ngay - 49,000₫
             </Link>
-            <button className="btn-primary" style={{ background: 'var(--accent)', fontSize: 16, padding: '0.75rem 2rem' }}>
+            <Link href="#features" className="btn-primary" style={{ background: 'var(--accent)', textDecoration: 'none', fontSize: 16, padding: '0.75rem 2rem', fontWeight: 700 }}>
               ▶ Xem Demo
-            </button>
+            </Link>
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 16, marginTop: 24 }}>
             <div className="card" style={{ padding: '1.5rem 1rem', borderLeft: '4px solid var(--primary)' }}>
@@ -69,7 +135,7 @@ export default function Home() {
       </section>
 
       {/* Features */}
-      <section style={{ padding: '2rem 1.5rem', background: 'var(--background)' }}>
+      <section id="features" style={{ padding: '2rem 1.5rem', background: 'var(--background)' }}>
         <div style={{ maxWidth: 1200, margin: '0 auto' }}>
           <h2 style={{ fontSize: '1.75rem', fontWeight: 800, textAlign: 'center', marginBottom: 24, color: 'var(--foreground)' }}>✨ Tính Năng</h2>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 16 }}>
@@ -204,8 +270,9 @@ export default function Home() {
             <div>
               <h4 style={{ color: 'var(--foreground)', fontWeight: 700, marginBottom: 12, fontSize: 15 }}>Hỗ Trợ</h4>
               <ul style={{ listStyle: 'none', padding: 0 }}>
-                <li style={{ marginBottom: 6 }}><a href="/dashboard" style={{ color: '#475569', textDecoration: 'none', fontSize: 13, transition: 'color 0.2s' }} onMouseEnter={(e) => (e.currentTarget as HTMLAnchorElement).style.color = 'var(--primary)'} onMouseLeave={(e) => (e.currentTarget as HTMLAnchorElement).style.color = '#475569'}>Dashboard</a></li>
-                <li><a href="#" style={{ color: '#475569', textDecoration: 'none', fontSize: 13, transition: 'color 0.2s' }} onMouseEnter={(e) => (e.currentTarget as HTMLAnchorElement).style.color = 'var(--primary)'} onMouseLeave={(e) => (e.currentTarget as HTMLAnchorElement).style.color = '#475569'}>FAQ</a></li>
+                <li style={{ marginBottom: 6 }}><Link href="/dashboard" style={{ color: '#475569', textDecoration: 'none', fontSize: 13, transition: 'color 0.2s' }} onMouseEnter={(e) => (e.currentTarget as HTMLAnchorElement).style.color = 'var(--primary)'} onMouseLeave={(e) => (e.currentTarget as HTMLAnchorElement).style.color = '#475569'}>Dashboard</Link></li>
+                <li style={{ marginBottom: 6 }}><Link href="/auth/login" style={{ color: '#475569', textDecoration: 'none', fontSize: 13, transition: 'color 0.2s' }} onMouseEnter={(e) => (e.currentTarget as HTMLAnchorElement).style.color = 'var(--primary)'} onMouseLeave={(e) => (e.currentTarget as HTMLAnchorElement).style.color = '#475569'}>Đăng nhập</Link></li>
+                <li><Link href="/auth/register" style={{ color: '#475569', textDecoration: 'none', fontSize: 13, transition: 'color 0.2s' }} onMouseEnter={(e) => (e.currentTarget as HTMLAnchorElement).style.color = 'var(--primary)'} onMouseLeave={(e) => (e.currentTarget as HTMLAnchorElement).style.color = '#475569'}>Đăng ký</Link></li>
               </ul>
             </div>
             <div>
