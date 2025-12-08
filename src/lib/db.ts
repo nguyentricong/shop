@@ -1,16 +1,19 @@
-// SQLite database for production
-import Database from 'better-sqlite3';
-import path from 'path';
+import crypto from 'crypto';
+import { Pool } from 'pg';
+
+export type PaymentMethod = 'momo' | 'vnpay' | 'bank' | 'stripe';
+export type OrderStatus = 'pending' | 'completed' | 'failed';
+export type LicensePlan = 'lifetime' | '1year' | '3month';
 
 export interface Order {
   id: string;
   email: string;
   name: string;
   licenseKey: string;
-  paymentMethod: 'momo' | 'bank' | 'paypal';
+  paymentMethod: PaymentMethod;
   amount: number;
   currency: string;
-  status: 'pending' | 'completed' | 'failed';
+  status: OrderStatus;
   createdAt: Date;
 }
 
@@ -20,166 +23,235 @@ export interface License {
   orderId: string;
   activatedAt?: Date;
   expiryAt?: Date;
-  plan: 'lifetime' | '1year' | '3month';
+  plan: LicensePlan;
   active: boolean;
 }
 
-// Initialize SQLite database
-const dbPath = path.join(process.cwd(), 'data', 'shop.db');
-const sqlite = new Database(dbPath);
+// -----------------------------------------------------------------------------
+// Postgres Client Setup
+// -----------------------------------------------------------------------------
 
-// Create tables if not exist
-sqlite.exec(`
-  CREATE TABLE IF NOT EXISTS orders (
-    id TEXT PRIMARY KEY,
-    email TEXT NOT NULL,
-    name TEXT NOT NULL,
-    licenseKey TEXT UNIQUE NOT NULL,
-    paymentMethod TEXT NOT NULL,
-    amount INTEGER NOT NULL,
-    currency TEXT NOT NULL,
-    status TEXT NOT NULL,
-    createdAt TEXT NOT NULL
-  );
+const connectionString = process.env.DATABASE_URL;
+if (!connectionString && typeof window === 'undefined') {
+  console.warn('DATABASE_URL is not set. Please configure it in .env.local for Postgres.');
+}
 
-  CREATE TABLE IF NOT EXISTS licenses (
-    key TEXT PRIMARY KEY,
-    email TEXT NOT NULL,
-    orderId TEXT NOT NULL,
-    activatedAt TEXT,
-    expiryAt TEXT,
-    plan TEXT NOT NULL,
-    active INTEGER NOT NULL,
-    FOREIGN KEY (orderId) REFERENCES orders(id)
-  );
+const pool = connectionString
+  ? new Pool({
+      connectionString,
+      ssl: process.env.DATABASE_SSL === 'true' ? { rejectUnauthorized: false } : undefined,
+    })
+  : undefined;
 
-  CREATE INDEX IF NOT EXISTS idx_orders_email ON orders(email);
-  CREATE INDEX IF NOT EXISTS idx_orders_licenseKey ON orders(licenseKey);
-  CREATE INDEX IF NOT EXISTS idx_licenses_email ON licenses(email);
-`);
+// Ensure schema exists (runs once per cold start)
+const initPromise = (async () => {
+  if (!pool) return;
 
-// Orders API
-export const db = {
-  // Orders
-  createOrder(order: Omit<Order, 'id' | 'createdAt'>) {
-    const id = Date.now().toString();
-    const createdAt = new Date().toISOString();
-    
-    const stmt = sqlite.prepare(`
-      INSERT INTO orders (id, email, name, licenseKey, paymentMethod, amount, currency, status, createdAt)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `);
-    
-    stmt.run(id, order.email, order.name, order.licenseKey, order.paymentMethod, order.amount, order.currency, order.status, createdAt);
-    
-    return {
-      id,
-      ...order,
-      createdAt: new Date(createdAt)
-    } as Order;
-  },
-
-  getOrder(id: string) {
-    const stmt = sqlite.prepare('SELECT * FROM orders WHERE id = ?');
-    const row = stmt.get(id) as any;
-    if (!row) return undefined;
-    return { ...row, createdAt: new Date(row.createdAt) } as Order;
-  },
-
-  getOrderByEmail(email: string) {
-    const stmt = sqlite.prepare('SELECT * FROM orders WHERE email = ?');
-    const rows = stmt.all(email) as any[];
-    return rows.map(row => ({ ...row, createdAt: new Date(row.createdAt) } as Order));
-  },
-
-  getOrderByLicenseKey(licenseKey: string) {
-    const stmt = sqlite.prepare('SELECT * FROM orders WHERE licenseKey = ?');
-    const row = stmt.get(licenseKey) as any;
-    if (!row) return undefined;
-    return { ...row, createdAt: new Date(row.createdAt) } as Order;
-  },
-
-  getAllOrders() {
-    const stmt = sqlite.prepare('SELECT * FROM orders');
-    const rows = stmt.all() as any[];
-    return rows.map(row => ({ ...row, createdAt: new Date(row.createdAt) } as Order));
-  },
-
-  // Licenses
-  createLicense(license: License) {
-    const stmt = sqlite.prepare(`
-      INSERT INTO licenses (key, email, orderId, activatedAt, expiryAt, plan, active)
-      VALUES (?, ?, ?, ?, ?, ?, ?)
-    `);
-    
-    stmt.run(
-      license.key,
-      license.email,
-      license.orderId,
-      license.activatedAt?.toISOString() || null,
-      license.expiryAt?.toISOString() || null,
-      license.plan,
-      license.active ? 1 : 0
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS orders (
+      id TEXT PRIMARY KEY,
+      email TEXT NOT NULL,
+      name TEXT NOT NULL,
+      license_key TEXT UNIQUE NOT NULL,
+      payment_method TEXT NOT NULL,
+      amount INTEGER NOT NULL,
+      currency TEXT NOT NULL,
+      status TEXT NOT NULL,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
     );
-    
-    return license;
+
+    CREATE TABLE IF NOT EXISTS licenses (
+      key TEXT PRIMARY KEY,
+      email TEXT NOT NULL,
+      order_id TEXT NOT NULL REFERENCES orders(id),
+      activated_at TIMESTAMPTZ,
+      expiry_at TIMESTAMPTZ,
+      plan TEXT NOT NULL,
+      active BOOLEAN NOT NULL DEFAULT FALSE
+    );
+
+    CREATE INDEX IF NOT EXISTS idx_orders_email ON orders(email);
+    CREATE INDEX IF NOT EXISTS idx_orders_license_key ON orders(license_key);
+    CREATE INDEX IF NOT EXISTS idx_licenses_email ON licenses(email);
+  `);
+})();
+
+// Helpers to map DB rows -> domain models
+interface DbOrderRow {
+  id: string;
+  email: string;
+  name: string;
+  license_key: string;
+  payment_method: PaymentMethod;
+  amount: number;
+  currency: string;
+  status: OrderStatus;
+  created_at: Date;
+}
+
+interface DbLicenseRow {
+  key: string;
+  email: string;
+  order_id: string;
+  activated_at: Date | null;
+  expiry_at: Date | null;
+  plan: LicensePlan;
+  active: boolean;
+}
+
+function mapOrder(row?: DbOrderRow | null): Order | undefined {
+  if (!row) return undefined;
+  return {
+    id: row.id,
+    email: row.email,
+    name: row.name,
+    licenseKey: row.license_key,
+    paymentMethod: row.payment_method,
+    amount: row.amount,
+    currency: row.currency,
+    status: row.status,
+    createdAt: new Date(row.created_at)
+  };
+}
+
+function mapLicense(row?: DbLicenseRow | null): License | undefined {
+  if (!row) return undefined;
+  return {
+    key: row.key,
+    email: row.email,
+    orderId: row.order_id,
+    activatedAt: row.activated_at ? new Date(row.activated_at) : undefined,
+    expiryAt: row.expiry_at ? new Date(row.expiry_at) : undefined,
+    plan: row.plan,
+    active: row.active
+  };
+}
+
+// -----------------------------------------------------------------------------
+// Public DB API (async)
+// -----------------------------------------------------------------------------
+export const db = {
+  async createOrder(order: Omit<Order, 'id' | 'createdAt'>): Promise<Order> {
+    if (!pool) throw new Error('DATABASE_URL not configured');
+    await initPromise;
+    const id = `ord_${crypto.randomUUID()}`;
+    const { rows } = await pool.query<DbOrderRow>(
+      `INSERT INTO orders (id, email, name, license_key, payment_method, amount, currency, status)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+       RETURNING *`,
+      [id, order.email, order.name, order.licenseKey, order.paymentMethod, order.amount, order.currency, order.status]
+    );
+    return mapOrder(rows[0]) as Order;
   },
 
-  getLicense(key: string) {
-    const stmt = sqlite.prepare('SELECT * FROM licenses WHERE key = ?');
-    const row = stmt.get(key) as any;
-    if (!row) return undefined;
-    
-    return {
-      ...row,
-      activatedAt: row.activatedAt ? new Date(row.activatedAt) : undefined,
-      expiryAt: row.expiryAt ? new Date(row.expiryAt) : undefined,
-      active: row.active === 1
-    } as License;
+  async updateOrderStatus(id: string, status: OrderStatus): Promise<Order | undefined> {
+    if (!pool) throw new Error('DATABASE_URL not configured');
+    await initPromise;
+    const { rows } = await pool.query<DbOrderRow>(
+      `UPDATE orders SET status = $2 WHERE id = $1 RETURNING *`,
+      [id, status]
+    );
+    return mapOrder(rows[0]);
   },
 
-  validateLicense(key: string) {
-    const license = this.getLicense(key);
+  async getOrder(id: string): Promise<Order | undefined> {
+    if (!pool) throw new Error('DATABASE_URL not configured');
+    await initPromise;
+    const { rows } = await pool.query<DbOrderRow>(`SELECT * FROM orders WHERE id = $1 LIMIT 1`, [id]);
+    return mapOrder(rows[0]);
+  },
+
+  async getOrderByEmail(email: string): Promise<Order[]> {
+    if (!pool) throw new Error('DATABASE_URL not configured');
+    await initPromise;
+    const { rows } = await pool.query<DbOrderRow>(`SELECT * FROM orders WHERE email = $1 ORDER BY created_at DESC`, [email]);
+    return rows.map(mapOrder).filter(Boolean) as Order[];
+  },
+
+  async getOrderByLicenseKey(licenseKey: string): Promise<Order | undefined> {
+    if (!pool) throw new Error('DATABASE_URL not configured');
+    await initPromise;
+    const { rows } = await pool.query<DbOrderRow>(`SELECT * FROM orders WHERE license_key = $1 LIMIT 1`, [licenseKey]);
+    return mapOrder(rows[0]);
+  },
+
+  async getAllOrders(): Promise<Order[]> {
+    if (!pool) throw new Error('DATABASE_URL not configured');
+    await initPromise;
+    const { rows } = await pool.query<DbOrderRow>(`SELECT * FROM orders ORDER BY created_at DESC`);
+    return rows.map(mapOrder).filter(Boolean) as Order[];
+  },
+
+  async createLicense(license: License): Promise<License> {
+    if (!pool) throw new Error('DATABASE_URL not configured');
+    await initPromise;
+    const { rows } = await pool.query<DbLicenseRow>(
+      `INSERT INTO licenses (key, email, order_id, activated_at, expiry_at, plan, active)
+       VALUES ($1, $2, $3, $4, $5, $6, $7)
+       RETURNING *`,
+      [
+        license.key,
+        license.email,
+        license.orderId,
+        license.activatedAt || null,
+        license.expiryAt || null,
+        license.plan,
+        license.active
+      ]
+    );
+    return mapLicense(rows[0]) as License;
+  },
+
+  async getLicense(key: string): Promise<License | undefined> {
+    if (!pool) throw new Error('DATABASE_URL not configured');
+    await initPromise;
+    const { rows } = await pool.query<DbLicenseRow>(`SELECT * FROM licenses WHERE key = $1 LIMIT 1`, [key]);
+    return mapLicense(rows[0]);
+  },
+
+  async validateLicense(key: string): Promise<{ valid: boolean; message: string }> {
+    const license = await this.getLicense(key);
     if (!license) return { valid: false, message: 'License not found' };
-    
     if (!license.active) return { valid: false, message: 'License is inactive' };
-    
     if (license.expiryAt && new Date() > license.expiryAt) {
       return { valid: false, message: 'License has expired' };
     }
-    
     return { valid: true, message: 'License is valid' };
   },
 
-  activateLicense(key: string) {
-    const license = this.getLicense(key);
-    if (!license) return false;
-    
-    const stmt = sqlite.prepare(`
-      UPDATE licenses SET active = 1, activatedAt = ? WHERE key = ?
-    `);
-    
-    stmt.run(new Date().toISOString(), key);
-    return true;
+  async activateLicense(key: string): Promise<boolean> {
+    if (!pool) throw new Error('DATABASE_URL not configured');
+    await initPromise;
+    const now = new Date();
+    const { rowCount } = await pool.query(
+      `UPDATE licenses SET active = TRUE, activated_at = $1 WHERE key = $2`,
+      [now, key]
+    );
+    return rowCount > 0;
   },
 
-  getAllLicenses() {
-    const stmt = sqlite.prepare('SELECT * FROM licenses');
-    const rows = stmt.all() as any[];
-    return rows.map(row => ({
-      ...row,
-      activatedAt: row.activatedAt ? new Date(row.activatedAt) : undefined,
-      expiryAt: row.expiryAt ? new Date(row.expiryAt) : undefined,
-      active: row.active === 1
-    } as License));
+  async getAllLicenses(): Promise<License[]> {
+    if (!pool) throw new Error('DATABASE_URL not configured');
+    await initPromise;
+    const { rows } = await pool.query<DbLicenseRow>(`SELECT * FROM licenses ORDER BY activated_at DESC NULLS LAST`);
+    return rows.map(mapLicense).filter(Boolean) as License[];
   }
 };
 
-// Mock data for testing
-export function initializeMockData() {
+// -----------------------------------------------------------------------------
+// Mock data for local development
+// -----------------------------------------------------------------------------
+export async function initializeMockData() {
+  if (!pool) return;
+  await initPromise;
+
+  const { rows } = await pool.query<{ count: string }>(`SELECT COUNT(*) as count FROM orders`);
+  const count = parseInt(rows[0]?.count || '0', 10);
+  if (count > 0) return;
+
   const mockLicenseKey = 'ADBLOCK-PRO-ABC123DEF456';
   const mockOrder: Order = {
-    id: '1',
+    id: 'ord_mock_1',
     email: 'user@example.com',
     name: 'Nguyễn Văn A',
     licenseKey: mockLicenseKey,
@@ -193,19 +265,15 @@ export function initializeMockData() {
   const mockLicense: License = {
     key: mockLicenseKey,
     email: 'user@example.com',
-    orderId: '1',
+    orderId: mockOrder.id,
     plan: 'lifetime',
     active: true,
   };
 
-  // Check if data already exists
-  const existing = sqlite.prepare('SELECT COUNT(*) as count FROM orders').get() as { count: number };
-  if (existing.count === 0) {
-    const orderStmt = sqlite.prepare(`
-      INSERT INTO orders (id, email, name, licenseKey, paymentMethod, amount, currency, status, createdAt)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `);
-    orderStmt.run(
+  await pool.query(
+    `INSERT INTO orders (id, email, name, license_key, payment_method, amount, currency, status, created_at)
+     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
+    [
       mockOrder.id,
       mockOrder.email,
       mockOrder.name,
@@ -214,26 +282,26 @@ export function initializeMockData() {
       mockOrder.amount,
       mockOrder.currency,
       mockOrder.status,
-      mockOrder.createdAt.toISOString()
-    );
+      mockOrder.createdAt,
+    ]
+  );
 
-    const licenseStmt = sqlite.prepare(`
-      INSERT INTO licenses (key, email, orderId, activatedAt, expiryAt, plan, active)
-      VALUES (?, ?, ?, ?, ?, ?, ?)
-    `);
-    licenseStmt.run(
+  await pool.query(
+    `INSERT INTO licenses (key, email, order_id, activated_at, expiry_at, plan, active)
+     VALUES ($1, $2, $3, $4, $5, $6, $7)`,
+    [
       mockLicense.key,
       mockLicense.email,
       mockLicense.orderId,
-      null,
+      new Date(),
       null,
       mockLicense.plan,
-      1
-    );
-  }
+      true,
+    ]
+  );
 }
 
-// Initialize with mock data
+// Auto-init mock data on server start (dev only)
 if (typeof window === 'undefined') {
-  initializeMockData();
+  initializeMockData().catch((err) => console.error('Mock data init error:', err));
 }

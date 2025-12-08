@@ -117,6 +117,25 @@ npm run dev
 # → License key sẽ hiển thị ngay (không qua payment gateway)
 ```
 
+## 🗄️ 4. Database (Postgres)
+
+### Local Postgres
+1. Cài Postgres (hoặc dùng Docker):
+   ```bash
+   docker run --name adblock-postgres -e POSTGRES_PASSWORD=postgres -e POSTGRES_USER=postgres -e POSTGRES_DB=adblock -p 5432:5432 -d postgres:16
+   ```
+2. Cập nhật `.env.local`:
+   ```bash
+   DATABASE_URL=postgres://postgres:postgres@localhost:5432/adblock
+   DATABASE_SSL=false
+   ```
+3. Restart `npm run dev` → schema sẽ auto-create, mock data sẽ seed nếu DB trống.
+
+### Vercel/Cloud Postgres
+- Dùng Vercel Postgres/Neon/Railway → lấy `DATABASE_URL` và đặt vào Project Env.
+- Nếu dịch vụ yêu cầu SSL, đặt `DATABASE_SSL=true`.
+- Webhooks/payment URLs giữ nguyên, chỉ đổi `NEXT_PUBLIC_BASE_URL` sang domain Vercel.
+
 ### Test với Payment Gateway:
 1. Thêm API keys vào `.env.local`
 2. Restart server

@@ -22,7 +22,7 @@ export async function POST(request: NextRequest) {
     const { licenseKey, email } = validatedData;
 
     // Validate license from database
-    const result = db.validateLicense(licenseKey);
+    const result = await db.validateLicense(licenseKey);
     
     if (!result.valid) {
       return NextResponse.json(
@@ -32,7 +32,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Get license details
-    const license = db.getLicense(licenseKey);
+    const license = await db.getLicense(licenseKey);
     
     if (!license) {
       return NextResponse.json(
@@ -51,7 +51,7 @@ export async function POST(request: NextRequest) {
 
     // Auto-activate if not activated yet
     if (!license.active) {
-      db.activateLicense(licenseKey);
+      await db.activateLicense(licenseKey);
     }
 
     return NextResponse.json({

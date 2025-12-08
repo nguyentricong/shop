@@ -25,13 +25,13 @@ export async function POST(request: NextRequest) {
       const session = event.data.object as any;
       const orderId = session.client_reference_id;
 
-      const order = db.getOrder(orderId);
+      const order = await db.getOrder(orderId);
       if (!order) {
         return NextResponse.json({ error: 'Order not found' }, { status: 404 });
       }
 
       // Activate license
-      db.activateLicense(order.licenseKey);
+      await db.activateLicense(order.licenseKey);
 
       // Send email
       await sendLicenseEmail({

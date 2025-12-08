@@ -45,7 +45,7 @@ export async function POST(request: NextRequest) {
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
 
     // 4. Tạo order trong database với status pending
-    const order = db.createOrder({
+    const order = await db.createOrder({
       email,
       name,
       paymentMethod,
@@ -56,7 +56,7 @@ export async function POST(request: NextRequest) {
     });
 
     // 5. Tạo license (inactive - sẽ active sau khi payment)
-    db.createLicense({
+    await db.createLicense({
       key: licenseKey,
       email,
       orderId: order.id,
@@ -204,11 +204,11 @@ export async function POST(request: NextRequest) {
 // Helper function để hoàn tất thanh toán
 async function completePayment(orderId: string, licenseKey: string, email: string, name: string) {
   // Update order status
-  const order = db.getOrder(orderId);
+  const order = await db.getOrder(orderId);
   if (!order) return;
 
   // Activate license
-  db.activateLicense(licenseKey);
+  await db.activateLicense(licenseKey);
 
   // Send email với license key
   await sendLicenseEmail({

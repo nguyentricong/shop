@@ -16,7 +16,7 @@ export async function GET(request: NextRequest) {
     // Validate email
     const validatedEmail = emailSchema.parse(email);
 
-    const orders = db.getOrderByEmail(validatedEmail);
+    const orders = await db.getOrderByEmail(validatedEmail);
 
     if (orders.length === 0) {
       return NextResponse.json({

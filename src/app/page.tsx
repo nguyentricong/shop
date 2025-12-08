@@ -197,8 +197,8 @@ export default function Home() {
             <div>
               <h4 style={{ color: 'var(--foreground)', fontWeight: 700, marginBottom: 12, fontSize: 15 }}>Công Ty</h4>
               <ul style={{ listStyle: 'none', padding: 0 }}>
-                <li style={{ marginBottom: 6 }}><a href="#" style={{ color: '#475569', textDecoration: 'none', fontSize: 13 }} onMouseEnter={(e) => e.target.style.color = 'var(--primary)'} onMouseLeave={(e) => e.target.style.color = '#475569'}>Về chúng tôi</a></li>
-                <li><a href="#" style={{ color: '#475569', textDecoration: 'none', fontSize: 13 }} onMouseEnter={(e) => e.target.style.color = 'var(--primary)'} onMouseLeave={(e) => e.target.style.color = '#475569'}>Blog</a></li>
+                <li style={{ marginBottom: 6 }}><a href="#" style={{ color: '#475569', textDecoration: 'none', fontSize: 13 }} onMouseEnter={(e) => (e.currentTarget as HTMLAnchorElement).style.color = 'var(--primary)'} onMouseLeave={(e) => (e.currentTarget as HTMLAnchorElement).style.color = '#475569'}>Về chúng tôi</a></li>
+                <li><a href="#" style={{ color: '#475569', textDecoration: 'none', fontSize: 13 }} onMouseEnter={(e) => (e.currentTarget as HTMLAnchorElement).style.color = 'var(--primary)'} onMouseLeave={(e) => (e.currentTarget as HTMLAnchorElement).style.color = '#475569'}>Blog</a></li>
               </ul>
             </div>
             <div>
@@ -211,8 +211,8 @@ export default function Home() {
             <div>
               <h4 style={{ color: 'var(--foreground)', fontWeight: 700, marginBottom: 12, fontSize: 15 }}>Pháp Lý</h4>
               <ul style={{ listStyle: 'none', padding: 0 }}>
-                <li style={{ marginBottom: 6 }}><a href="#" style={{ color: '#475569', textDecoration: 'none', fontSize: 13 }} onMouseEnter={(e) => e.target.style.color = 'var(--primary)'} onMouseLeave={(e) => e.target.style.color = '#475569'}>Điều khoản</a></li>
-                <li><a href="#" style={{ color: '#475569', textDecoration: 'none', fontSize: 13 }} onMouseEnter={(e) => e.target.style.color = 'var(--primary)'} onMouseLeave={(e) => e.target.style.color = '#475569'}>Quyền riêng tư</a></li>
+                <li style={{ marginBottom: 6 }}><a href="#" style={{ color: '#475569', textDecoration: 'none', fontSize: 13 }} onMouseEnter={(e) => (e.currentTarget as HTMLAnchorElement).style.color = 'var(--primary)'} onMouseLeave={(e) => (e.currentTarget as HTMLAnchorElement).style.color = '#475569'}>Điều khoản</a></li>
+                <li><a href="#" style={{ color: '#475569', textDecoration: 'none', fontSize: 13 }} onMouseEnter={(e) => (e.currentTarget as HTMLAnchorElement).style.color = 'var(--primary)'} onMouseLeave={(e) => (e.currentTarget as HTMLAnchorElement).style.color = '#475569'}>Quyền riêng tư</a></li>
               </ul>
             </div>
           </div>

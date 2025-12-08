@@ -23,13 +23,13 @@ export async function GET(request: NextRequest) {
 
     // ResponseCode = '00' means success
     if (responseCode === '00') {
-      const order = db.getOrder(orderId);
+      const order = await db.getOrder(orderId);
       if (!order) {
         return NextResponse.json({ error: 'Order not found' }, { status: 404 });
       }
 
       // Activate license
-      db.activateLicense(order.licenseKey);
+      await db.activateLicense(order.licenseKey);
 
       // Send email
       await sendLicenseEmail({
