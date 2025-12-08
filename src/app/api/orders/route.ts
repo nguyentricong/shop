@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
+import { emailSchema } from '@/lib/validation';
+import { ZodError } from 'zod';
 
 export async function GET(request: NextRequest) {
   try {
@@ -46,7 +48,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json(
         { 
           error: 'Email không hợp lệ',
-          details: error.errors.map(e => e.message)
+          details: error.issues.map((e) => e.message)
         },
         { status: 400 }
       );
