@@ -1,10 +1,11 @@
+
 'use client';
 
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 
-export default function PaymentCallbackPage() {
+function PaymentCallbackContent() {
   const searchParams = useSearchParams();
   const [status, setStatus] = useState<'loading' | 'success' | 'failed'>('loading');
   const [message, setMessage] = useState('');
@@ -100,5 +101,17 @@ export default function PaymentCallbackPage() {
         }
       `}</style>
     </div>
+  );
+}
+
+export default function PaymentCallbackPage() {
+  return (
+    <Suspense fallback={
+      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '2rem' }}>
+        <p>Đang tải trạng thái thanh toán...</p>
+      </div>
+    }>
+      <PaymentCallbackContent />
+    </Suspense>
   );
 }
