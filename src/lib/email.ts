@@ -1,6 +1,15 @@
 import { Resend } from 'resend';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+// Lazily create the Resend client so missing env vars do not crash module evaluation
+let resendClient: Resend | null = null;
+
+function getResendClient(): Resend | null {
+  if (resendClient) return resendClient;
+  const apiKey = process.env.RESEND_API_KEY;
+  if (!apiKey) return null;
+  resendClient = new Resend(apiKey);
+  return resendClient;
+}
 
 interface EmailParams {
   to: string;
@@ -10,8 +19,15 @@ interface EmailParams {
 }
 
 export async function sendLicenseEmail({ to, name, licenseKey, downloadUrl }: EmailParams) {
+  const client = getResendClient();
+  if (!client) {
+    const error = new Error('RESEND_API_KEY is missing');
+    console.error(error.message);
+    return { success: false, error };
+  }
+
   try {
-    const { data, error } = await resend.emails.send({
+    const { data, error } = await client.emails.send({
       from: 'AdBlock Pro <noreply@yourdomain.com>',
       to: [to],
       subject: '🎉 License Key AdBlock Pro của bạn đã sẵn sàng!',
