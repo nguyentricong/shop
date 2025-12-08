@@ -25,11 +25,12 @@ export interface JwtSessionPayload {
   email: string;
   name: string;
   provider: string;
+  [key: string]: unknown;
 }
 
 export async function signSession(payload: JwtSessionPayload) {
   if (!JWT_SECRET) throw new Error('Missing NEXTAUTH_SECRET');
-  return new SignJWT(payload)
+  return new SignJWT(payload as Record<string, unknown>)
     .setProtectedHeader({ alg: 'HS256' })
     .setIssuedAt()
     .setIssuer(JWT_ISSUER)
