@@ -227,7 +227,7 @@ export const db = {
       `UPDATE licenses SET active = TRUE, activated_at = $1 WHERE key = $2`,
       [now, key]
     );
-    return rowCount > 0;
+    return (rowCount ?? 0) > 0;
   },
 
   async getAllLicenses(): Promise<License[]> {
