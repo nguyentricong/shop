@@ -4,6 +4,7 @@ import { Pool } from 'pg';
 export type PaymentMethod = 'momo' | 'vnpay' | 'bank' | 'stripe';
 export type OrderStatus = 'pending' | 'completed' | 'failed';
 export type LicensePlan = 'lifetime' | '1year' | '3month';
+export type AuthProvider = 'credentials' | 'google';
 
 export interface Order {
   id: string;
@@ -25,6 +26,15 @@ export interface License {
   expiryAt?: Date;
   plan: LicensePlan;
   active: boolean;
+}
+
+export interface User {
+  id: string;
+  email: string;
+  name: string;
+  passwordHash?: string | null;
+  provider: AuthProvider;
+  createdAt: Date;
 }
 
 // -----------------------------------------------------------------------------
@@ -70,9 +80,19 @@ const initPromise = (async () => {
       active BOOLEAN NOT NULL DEFAULT FALSE
     );
 
+    CREATE TABLE IF NOT EXISTS users (
+      id TEXT PRIMARY KEY,
+      email TEXT UNIQUE NOT NULL,
+      name TEXT NOT NULL,
+      password_hash TEXT,
+      provider TEXT NOT NULL,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );
+
     CREATE INDEX IF NOT EXISTS idx_orders_email ON orders(email);
     CREATE INDEX IF NOT EXISTS idx_orders_license_key ON orders(license_key);
     CREATE INDEX IF NOT EXISTS idx_licenses_email ON licenses(email);
+    CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
   `);
 })();
 
@@ -97,6 +117,15 @@ interface DbLicenseRow {
   expiry_at: Date | null;
   plan: LicensePlan;
   active: boolean;
+}
+
+interface DbUserRow {
+  id: string;
+  email: string;
+  name: string;
+  password_hash: string | null;
+  provider: AuthProvider;
+  created_at: Date;
 }
 
 function mapOrder(row?: DbOrderRow | null): Order | undefined {
@@ -124,6 +153,18 @@ function mapLicense(row?: DbLicenseRow | null): License | undefined {
     expiryAt: row.expiry_at ? new Date(row.expiry_at) : undefined,
     plan: row.plan,
     active: row.active
+  };
+}
+
+function mapUser(row?: DbUserRow | null): User | undefined {
+  if (!row) return undefined;
+  return {
+    id: row.id,
+    email: row.email,
+    name: row.name,
+    passwordHash: row.password_hash,
+    provider: row.provider,
+    createdAt: new Date(row.created_at)
   };
 }
 
@@ -235,6 +276,32 @@ export const db = {
     await initPromise;
     const { rows } = await pool.query<DbLicenseRow>(`SELECT * FROM licenses ORDER BY activated_at DESC NULLS LAST`);
     return rows.map(mapLicense).filter(Boolean) as License[];
+  },
+
+  async createUser(user: { email: string; name: string; passwordHash?: string | null; provider: AuthProvider }): Promise<User> {
+    if (!pool) throw new Error('DATABASE_URL not configured');
+    await initPromise;
+    const id = `usr_${crypto.randomUUID()}`;
+    const { rows } = await pool.query<DbUserRow>(
+      `INSERT INTO users (id, email, name, password_hash, provider)
+       VALUES ($1, $2, $3, $4, $5)
+       RETURNING *`,
+      [id, user.email.toLowerCase(), user.name, user.passwordHash || null, user.provider]
+    );
+    return mapUser(rows[0]) as User;
+  },
+
+  async getUserByEmail(email: string): Promise<User | undefined> {
+    if (!pool) throw new Error('DATABASE_URL not configured');
+    await initPromise;
+    const { rows } = await pool.query<DbUserRow>(`SELECT * FROM users WHERE email = $1 LIMIT 1`, [email.toLowerCase()]);
+    return mapUser(rows[0]);
+  },
+
+  async upsertOAuthUser(params: { email: string; name: string; provider: AuthProvider }): Promise<User> {
+    const existing = await this.getUserByEmail(params.email);
+    if (existing) return existing;
+    return this.createUser({ ...params, passwordHash: null });
   }
 };
 
