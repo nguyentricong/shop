@@ -71,7 +71,7 @@ export async function POST(request: NextRequest) {
         { 
           valid: false,
           error: 'Dữ liệu không hợp lệ',
-          details: error.errors.map(e => ({
+          details: error.issues.map((e) => ({
             field: e.path.join('.'),
             message: e.message
           }))
@@ -85,33 +85,4 @@ export async function POST(request: NextRequest) {
       { status: 500 }
     );
   }
-}
-
-  } catch (error) {
-    console.error('License validation error:', error);
-    return NextResponse.json(
-      { valid: false, message: 'Lỗi server' },
-      { status: 500 }
-    );
-  }
-}
-
-/**
- * Helper function để thêm license vào database (được gọi khi mua hàng)
- */
-export function addLicense(
-  licenseKey: string,
-  email: string,
-  plan: 'lifetime' | '1year' | '3month' = 'lifetime'
-): void {
-  const expiry = plan === 'lifetime' ? undefined : 
-    plan === '1year' ? new Date(Date.now() + 365 * 24 * 60 * 60 * 1000) :
-    new Date(Date.now() + 90 * 24 * 60 * 60 * 1000);
-
-  validLicenses.set(licenseKey, {
-    email,
-    activatedAt: new Date(),
-    expiry,
-    plan
-  });
 }
