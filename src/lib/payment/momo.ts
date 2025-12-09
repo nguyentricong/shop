@@ -81,7 +81,7 @@ export async function createMoMoPayment(params: MoMoPaymentParams): Promise<MoMo
     partnerCode: MOMO_PARTNER_CODE,
     accessKey: MOMO_ACCESS_KEY,
     requestId,
-    amount: params.amount,
+    amount: params.amount.toString(),
     orderId: params.orderId,
     orderInfo: rawOrderInfo,
     redirectUrl: params.returnUrl,
