@@ -43,7 +43,14 @@ export async function createMoMoPayment(params: MoMoPaymentParams): Promise<MoMo
   const rawOrderInfo = params.orderInfo
     .replace(/–/g, '-')
     .replace(/—/g, '-')
-    .normalize("NFKC");
+    .replace(/‐/g, '-')  // hyphen
+    .replace(/‑/g, '-')  // non-breaking hyphen
+    .replace(/−/g, '-')  // minus sign
+    .normalize("NFKC")
+    .trim();
+
+  // Debug: log char codes
+  console.log('orderInfo chars:', rawOrderInfo.split('').map((c, i) => `[${i}]=${c} (${c.charCodeAt(0)})`).join(' '));
 
   const rawSignature =
     `accessKey=${MOMO_ACCESS_KEY}` +
