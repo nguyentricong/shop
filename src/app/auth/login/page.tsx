@@ -37,9 +37,10 @@ export default function LoginPage() {
   };
 
   return (
-    <div style={{ minHeight: '100vh', background: '#f8fafc', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '2rem' }}>
-      <div style={{ width: '100%', maxWidth: 420, background: '#fff', border: '1px solid #e2e8f0', borderRadius: 12, padding: 32 }}>
-        <h1 style={{ fontSize: '1.5rem', fontWeight: 800, marginBottom: 16 }}>Đăng nhập</h1>
+    <div style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '2rem' }}>
+      <div style={{ width: '100%', maxWidth: 420, background: 'rgba(255, 255, 255, 0.95)', backdropFilter: 'blur(10px)', border: '1px solid rgba(255, 255, 255, 0.3)', borderRadius: 16, padding: 40, boxShadow: '0 20px 60px rgba(0, 0, 0, 0.3)' }}>
+        <h1 style={{ fontSize: '2rem', fontWeight: 900, marginBottom: 8, background: 'linear-gradient(135deg, #667eea, #764ba2)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>Đăng nhập</h1>
+        <p style={{ color: '#64748b', marginBottom: 24, fontSize: '0.95rem' }}>Chào mừng bạn quay trở lại!</p>
         <form onSubmit={handleLogin} style={{ display: 'grid', gap: 12 }}>
           <div style={{ display: 'grid', gap: 6 }}>
             <label>Email</label>
@@ -48,7 +49,9 @@ export default function LoginPage() {
               value={email}
               onChange={e => setEmail(e.target.value)}
               required
-              style={{ border: '1px solid #cbd5e1', borderRadius: 8, padding: '10px 12px' }}
+              style={{ border: '2px solid #e2e8f0', borderRadius: 10, padding: '12px 14px', fontSize: '1rem', transition: 'all 0.2s', outline: 'none' }}
+              onFocus={(e) => e.target.style.borderColor = '#667eea'}
+              onBlur={(e) => e.target.style.borderColor = '#e2e8f0'}
             />
           </div>
           <div style={{ display: 'grid', gap: 6 }}>
@@ -58,18 +61,20 @@ export default function LoginPage() {
               value={password}
               onChange={e => setPassword(e.target.value)}
               required
-              style={{ border: '1px solid #cbd5e1', borderRadius: 8, padding: '10px 12px' }}
+              style={{ border: '2px solid #e2e8f0', borderRadius: 10, padding: '12px 14px', fontSize: '1rem', transition: 'all 0.2s', outline: 'none' }}
+              onFocus={(e) => e.target.style.borderColor = '#667eea'}
+              onBlur={(e) => e.target.style.borderColor = '#e2e8f0'}
             />
           </div>
           {error && <p style={{ color: '#dc2626', fontSize: 14 }}>{error}</p>}
-          <button type="submit" disabled={loading} style={{ background: 'var(--primary)', color: '#fff', padding: '12px', borderRadius: 8, fontWeight: 700, border: 'none', cursor: 'pointer' }}>
-            {loading ? 'Đang đăng nhập...' : 'Đăng nhập'}
+          <button type="submit" disabled={loading} style={{ background: 'linear-gradient(135deg, #667eea, #764ba2)', color: '#fff', padding: '14px', borderRadius: 10, fontWeight: 700, border: 'none', cursor: loading ? 'not-allowed' : 'pointer', fontSize: '1rem', boxShadow: '0 4px 15px rgba(102, 126, 234, 0.4)', transition: 'all 0.3s', opacity: loading ? 0.7 : 1 }}>
+            {loading ? '⏳ Đang đăng nhập...' : '🚀 Đăng nhập'}
           </button>
         </form>
 
         <div style={{ margin: '16px 0', textAlign: 'center', color: '#94a3b8' }}>hoặc</div>
-        <button onClick={handleGoogle} style={{ width: '100%', border: '1px solid #e2e8f0', padding: '12px', borderRadius: 8, fontWeight: 600, background: '#fff', cursor: 'pointer' }}>
-          Đăng nhập với Google
+        <button onClick={handleGoogle} style={{ width: '100%', border: '2px solid #e2e8f0', padding: '14px', borderRadius: 10, fontWeight: 600, background: '#fff', cursor: 'pointer', fontSize: '1rem', transition: 'all 0.3s', boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)' }} onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#667eea'; e.currentTarget.style.transform = 'translateY(-2px)'; }} onMouseLeave={(e) => { e.currentTarget.style.borderColor = '#e2e8f0'; e.currentTarget.style.transform = 'translateY(0)'; }}>
+          🔐 Đăng nhập với Google
         </button>
 
         <p style={{ marginTop: 16, fontSize: 14 }}>

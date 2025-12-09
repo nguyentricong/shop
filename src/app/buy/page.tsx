@@ -96,11 +96,12 @@ export default function BuyPage() {
           <Link href="/" style={{ textDecoration: 'none', color: '#fff', fontWeight: 600, fontSize: 14 }}>← Quay Lại</Link>
         </div>
       </header>
-      <div style={{ maxWidth: 600, margin: '0 auto', padding: '6rem 1.5rem 2rem' }}>
+      <div style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', padding: '6rem 1.5rem 2rem' }}>
+        <div style={{ maxWidth: 600, margin: '0 auto' }}>
         {step === 'info' && (
-          <div style={{ background: '#fff', borderRadius: 12, border: '1px solid #e2e8f0', padding: 24 }}>
-            <h1 style={{ fontSize: '1.75rem', fontWeight: 800, color: 'var(--foreground)', marginBottom: 8 }}>Mua AdBlock Pro</h1>
-            <p style={{ color: '#475569', marginBottom: 24 }}>Điền thông tin để nhận License Key</p>
+          <div style={{ background: 'rgba(255, 255, 255, 0.95)', backdropFilter: 'blur(10px)', borderRadius: 16, border: '1px solid rgba(255, 255, 255, 0.3)', padding: 32, boxShadow: '0 20px 60px rgba(0, 0, 0, 0.3)' }}>
+            <h1 style={{ fontSize: '2rem', fontWeight: 900, marginBottom: 8, background: 'linear-gradient(135deg, #667eea, #764ba2)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>Mua AdBlock Pro</h1>
+            <p style={{ color: '#64748b', marginBottom: 28, fontSize: '0.95rem' }}>Điền thông tin để nhận License Key</p>
 
             <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
               {/* Email */}
@@ -113,7 +114,9 @@ export default function BuyPage() {
                   value={formData.email}
                   onChange={handleInputChange}
                   placeholder="your@email.com"
-                  style={{ width: '100%', background: '#fff', border: '1px solid #e2e8f0', borderRadius: 8, padding: '10px 12px', fontSize: 14, color: 'var(--foreground)' }}
+                  style={{ width: '100%', background: '#fff', border: '2px solid #e2e8f0', borderRadius: 10, padding: '12px 14px', fontSize: '1rem', color: 'var(--foreground)', transition: 'all 0.2s', outline: 'none' }}
+                  onFocus={(e) => e.target.style.borderColor = '#667eea'}
+                  onBlur={(e) => e.target.style.borderColor = '#e2e8f0'}
                 />
                 <p style={{ color: '#64748b', fontSize: 12, marginTop: 6 }}>Sẽ nhận License Key qua email này</p>
               </div>
@@ -128,7 +131,9 @@ export default function BuyPage() {
                   value={formData.name}
                   onChange={handleInputChange}
                   placeholder="Nguyễn Văn A"
-                  style={{ width: '100%', background: '#fff', border: '1px solid #e2e8f0', borderRadius: 8, padding: '10px 12px', fontSize: 14, color: 'var(--foreground)' }}
+                  style={{ width: '100%', background: '#fff', border: '2px solid #e2e8f0', borderRadius: 10, padding: '12px 14px', fontSize: '1rem', color: 'var(--foreground)', transition: 'all 0.2s', outline: 'none' }}
+                  onFocus={(e) => e.target.style.borderColor = '#667eea'}
+                  onBlur={(e) => e.target.style.borderColor = '#e2e8f0'}
                 />
               </div>
 
@@ -139,7 +144,9 @@ export default function BuyPage() {
                   name="paymentMethod"
                   value={formData.paymentMethod}
                   onChange={handleInputChange}
-                  style={{ width: '100%', background: '#fff', border: '1px solid #e2e8f0', borderRadius: 8, padding: '10px 12px', fontSize: 14, color: 'var(--foreground)' }}
+                  style={{ width: '100%', background: '#fff', border: '2px solid #e2e8f0', borderRadius: 10, padding: '12px 14px', fontSize: '1rem', color: 'var(--foreground)', transition: 'all 0.2s', outline: 'none', cursor: 'pointer' }}
+                  onFocus={(e) => e.target.style.borderColor = '#667eea'}
+                  onBlur={(e) => e.target.style.borderColor = '#e2e8f0'}
                 >
                   <option value="momo">🎯 MoMo - Quét QR (Nhanh nhất)</option>
                   <option value="vnpay">💳 VNPay - Thẻ ATM/Visa</option>
@@ -155,7 +162,7 @@ export default function BuyPage() {
               </div>
 
               {/* Order Summary */}
-              <div style={{ background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: 8, padding: 16 }}>
+              <div style={{ background: 'linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1))', border: '2px solid rgba(102, 126, 234, 0.3)', borderRadius: 12, padding: 20, boxShadow: '0 4px 12px rgba(102, 126, 234, 0.15)' }}>
                 <h3 style={{ color: 'var(--foreground)', fontWeight: 700, marginBottom: 12 }}>Tóm Tắt Đơn Hàng</h3>
                 <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--foreground)', marginBottom: 8, fontSize: 14 }}>
                   <span>AdBlock Pro (Trọn Đời)</span>
@@ -171,7 +178,7 @@ export default function BuyPage() {
               <button
                 type="submit"
                 disabled={loading}
-                style={{ width: '100%', background: 'var(--primary)', color: '#fff', fontWeight: 700, padding: '12px 16px', borderRadius: 8, border: 'none', cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.6 : 1, fontSize: 15 }}
+                style={{ width: '100%', background: 'linear-gradient(135deg, #667eea, #764ba2)', color: '#fff', fontWeight: 700, padding: '14px 16px', borderRadius: 10, border: 'none', cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.6 : 1, fontSize: '1rem', boxShadow: '0 4px 15px rgba(102, 126, 234, 0.4)', transition: 'all 0.3s' }}
               >
                 {loading ? 'Đang xử lý...' : '💳 Tiếp Tục Thanh Toán'}
               </button>
@@ -185,7 +192,7 @@ export default function BuyPage() {
         )}
 
         {step === 'success' && (
-          <div style={{ background: '#fff', borderRadius: 12, border: '2px solid var(--success)', padding: 24, textAlign: 'center' }}>
+          <div style={{ background: 'rgba(255, 255, 255, 0.95)', backdropFilter: 'blur(10px)', borderRadius: 16, border: '2px solid #10b981', padding: 32, textAlign: 'center', boxShadow: '0 20px 60px rgba(0, 0, 0, 0.3)' }}>
             <div style={{ width: 56, height: 56, background: 'var(--success)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px' }}>
               <Check style={{ width: 32, height: 32, color: '#fff' }} />
             </div>
@@ -239,6 +246,7 @@ export default function BuyPage() {
             </p>
           </div>
         )}
+        </div>
       </div>
     </>
   );

@@ -7,37 +7,38 @@ export default function Home() {
   return (
     <div style={{ minHeight: '100vh', background: 'var(--background)' }}>
       {/* Hero Section */}
-      <section style={{ padding: '3rem 1.5rem 2.5rem', background: 'linear-gradient(120deg, #e0e7ff 0%, #f8fafc 100%)' }}>
-        <div style={{ maxWidth: 900, margin: '0 auto', textAlign: 'center' }}>
-          <h1 style={{ fontSize: '2.75rem', fontWeight: 800, color: 'var(--foreground)', marginBottom: 16, lineHeight: 1.2 }}>
-            Xem Video <span className="accent">Sạch Sẽ</span>
+      <section style={{ padding: '5rem 1.5rem 4rem', background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', position: 'relative', overflow: 'hidden' }}>
+        <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, background: 'radial-gradient(circle at 20% 50%, rgba(120,119,198,0.3), transparent 50%), radial-gradient(circle at 80% 80%, rgba(99,102,241,0.3), transparent 50%)', pointerEvents: 'none' }}></div>
+        <div style={{ maxWidth: 900, margin: '0 auto', textAlign: 'center', position: 'relative', zIndex: 1 }}>
+          <h1 style={{ fontSize: '3.25rem', fontWeight: 900, color: '#fff', marginBottom: 20, lineHeight: 1.15, textShadow: '0 2px 20px rgba(0,0,0,0.15)' }}>
+            Xem Video <span style={{ background: 'linear-gradient(120deg, #fbbf24 0%, #f59e0b 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>Sạch Sẽ</span>
           </h1>
-          <p style={{ fontSize: '1.1rem', color: '#475569', marginBottom: 24, maxWidth: 600, margin: '0 auto 24px' }}>
+          <p style={{ fontSize: '1.2rem', color: 'rgba(255,255,255,0.95)', marginBottom: 32, maxWidth: 640, margin: '0 auto 32px', lineHeight: 1.6 }}>
             Tiện ích chặn quảng cáo mạnh mẽ nhất cho YouTube, Facebook và web. Nhanh, an toàn, 100% riêng tư.
           </p>
-          <div style={{ display: 'flex', flexDirection: 'row', gap: 12, justifyContent: 'center', marginBottom: 24, flexWrap: 'wrap' }}>
-            <Link href="/buy" className="btn-primary" style={{ textDecoration: 'none', fontSize: 16, padding: '0.75rem 2rem', fontWeight: 700, boxShadow: '0 4px 16px rgba(37, 99, 235, 0.3)' }}>
+          <div style={{ display: 'flex', flexDirection: 'row', gap: 16, justifyContent: 'center', marginBottom: 40, flexWrap: 'wrap' }}>
+            <Link href="/buy" style={{ textDecoration: 'none', fontSize: 17, padding: '1rem 2.5rem', fontWeight: 700, background: '#fff', color: '#667eea', borderRadius: 12, boxShadow: '0 8px 24px rgba(0,0,0,0.15)', transition: 'transform 0.2s, box-shadow 0.2s', display: 'inline-block' }}>
               🎁 Mua Ngay - 49,000₫
             </Link>
-            <Link href="#features" className="btn-primary" style={{ background: 'var(--accent)', textDecoration: 'none', fontSize: 16, padding: '0.75rem 2rem', fontWeight: 700 }}>
+            <Link href="#features" style={{ textDecoration: 'none', fontSize: 17, padding: '1rem 2.5rem', fontWeight: 700, background: 'rgba(255,255,255,0.15)', color: '#fff', borderRadius: 12, border: '2px solid rgba(255,255,255,0.3)', backdropFilter: 'blur(10px)', display: 'inline-block' }}>
               ▶ Xem Demo
             </Link>
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 16, marginTop: 24 }}>
-            <div className="card" style={{ padding: '1.5rem 1rem', borderLeft: '4px solid var(--primary)' }}>
-              <Shield style={{ color: 'var(--primary)', width: 28, height: 28, marginBottom: 8 }} />
-              <div style={{ fontWeight: 700, fontSize: 16 }}>🔒 Bảo mật</div>
-              <div style={{ color: '#64748b', fontSize: 13 }}>Không lưu dữ liệu</div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 20, marginTop: 32 }}>
+            <div style={{ padding: '1.75rem 1.25rem', background: 'rgba(255,255,255,0.95)', borderRadius: 16, boxShadow: '0 4px 20px rgba(0,0,0,0.08)', border: '1px solid rgba(255,255,255,0.8)', backdropFilter: 'blur(10px)' }}>
+              <Shield style={{ color: '#667eea', width: 32, height: 32, marginBottom: 12 }} />
+              <div style={{ fontWeight: 700, fontSize: 17, color: '#1e293b', marginBottom: 4 }}>Bảo mật</div>
+              <div style={{ color: '#64748b', fontSize: 14 }}>Không lưu dữ liệu</div>
             </div>
-            <div className="card" style={{ padding: '1.5rem 1rem', borderLeft: '4px solid var(--accent)' }}>
-              <Zap style={{ color: 'var(--accent)', width: 28, height: 28, marginBottom: 8 }} />
-              <div style={{ fontWeight: 700, fontSize: 16 }}>⚡ Tốc độ</div>
-              <div style={{ color: '#64748b', fontSize: 13 }}>Không làm chậm</div>
+            <div style={{ padding: '1.75rem 1.25rem', background: 'rgba(255,255,255,0.95)', borderRadius: 16, boxShadow: '0 4px 20px rgba(0,0,0,0.08)', border: '1px solid rgba(255,255,255,0.8)', backdropFilter: 'blur(10px)' }}>
+              <Zap style={{ color: '#f59e0b', width: 32, height: 32, marginBottom: 12 }} />
+              <div style={{ fontWeight: 700, fontSize: 17, color: '#1e293b', marginBottom: 4 }}>Tốc độ</div>
+              <div style={{ color: '#64748b', fontSize: 14 }}>Không làm chậm</div>
             </div>
-            <div className="card" style={{ padding: '1.5rem 1rem', borderLeft: '4px solid var(--success)' }}>
-              <CheckCircle style={{ color: 'var(--success)', width: 28, height: 28, marginBottom: 8 }} />
-              <div style={{ fontWeight: 700, fontSize: 16 }}>✅ Hiệu quả</div>
-              <div style={{ color: '#64748b', fontSize: 13 }}>Chặn 99.9%</div>
+            <div style={{ padding: '1.75rem 1.25rem', background: 'rgba(255,255,255,0.95)', borderRadius: 16, boxShadow: '0 4px 20px rgba(0,0,0,0.08)', border: '1px solid rgba(255,255,255,0.8)', backdropFilter: 'blur(10px)' }}>
+              <CheckCircle style={{ color: '#10b981', width: 32, height: 32, marginBottom: 12 }} />
+              <div style={{ fontWeight: 700, fontSize: 17, color: '#1e293b', marginBottom: 4 }}>Hiệu quả</div>
+              <div style={{ color: '#64748b', fontSize: 14 }}>Chặn 99.9%</div>
             </div>
           </div>
         </div>
@@ -45,33 +46,33 @@ export default function Home() {
       {/* ...các phần khác giữ nguyên... */}
 
       {/* Stats */}
-      <section style={{ background: '#f8fafc', color: 'var(--foreground)', padding: '2rem 1.5rem' }}>
+      <section style={{ background: '#fff', color: 'var(--foreground)', padding: '4rem 1.5rem' }}>
         <div style={{ maxWidth: 1200, margin: '0 auto' }}>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: 16, textAlign: 'center' }}>
-            <div style={{ padding: '12px 8px', borderRadius: 8, background: '#fff', border: '1px solid #e2e8f0' }}>
-              <div style={{ fontSize: '1.75rem', fontWeight: 800, marginBottom: 4, color: 'var(--primary)' }}>100K+</div>
-              <div style={{ fontSize: 12, opacity: 0.7, fontWeight: 500 }}>🎉 Người mua</div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: 24, textAlign: 'center' }}>
+            <div style={{ padding: '2rem 1.5rem', borderRadius: 16, background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', boxShadow: '0 8px 24px rgba(102,126,234,0.25)' }}>
+              <div style={{ fontSize: '2.5rem', fontWeight: 900, marginBottom: 8, color: '#fff' }}>100K+</div>
+              <div style={{ fontSize: 14, color: 'rgba(255,255,255,0.9)', fontWeight: 600 }}>Người mua</div>
             </div>
-            <div style={{ padding: '12px 8px', borderRadius: 8, background: '#fff', border: '1px solid #e2e8f0' }}>
-              <div style={{ fontSize: '1.75rem', fontWeight: 800, marginBottom: 4, color: 'var(--primary)' }}>99.9%</div>
-              <div style={{ fontSize: 12, opacity: 0.7, fontWeight: 500 }}>✅ Chặn quảng cáo</div>
+            <div style={{ padding: '2rem 1.5rem', borderRadius: 16, background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)', boxShadow: '0 8px 24px rgba(240,147,251,0.25)' }}>
+              <div style={{ fontSize: '2.5rem', fontWeight: 900, marginBottom: 8, color: '#fff' }}>99.9%</div>
+              <div style={{ fontSize: 14, color: 'rgba(255,255,255,0.9)', fontWeight: 600 }}>Chặn quảng cáo</div>
             </div>
-            <div style={{ padding: '12px 8px', borderRadius: 8, background: '#fff', border: '1px solid #e2e8f0' }}>
-              <div style={{ fontSize: '1.75rem', fontWeight: 800, marginBottom: 4, color: 'var(--primary)' }}>60%</div>
-              <div style={{ fontSize: 12, opacity: 0.7, fontWeight: 500 }}>⚡ Tải nhanh hơn</div>
+            <div style={{ padding: '2rem 1.5rem', borderRadius: 16, background: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)', boxShadow: '0 8px 24px rgba(79,172,254,0.25)' }}>
+              <div style={{ fontSize: '2.5rem', fontWeight: 900, marginBottom: 8, color: '#fff' }}>60%</div>
+              <div style={{ fontSize: 14, color: 'rgba(255,255,255,0.9)', fontWeight: 600 }}>Tải nhanh hơn</div>
             </div>
-            <div style={{ padding: '12px 8px', borderRadius: 8, background: '#fff', border: '1px solid #e2e8f0' }}>
-              <div style={{ fontSize: '1.75rem', fontWeight: 800, marginBottom: 4, color: 'var(--success)' }}>5★</div>
-              <div style={{ fontSize: 12, opacity: 0.7, fontWeight: 500 }}>⭐ Đánh giá</div>
+            <div style={{ padding: '2rem 1.5rem', borderRadius: 16, background: 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)', boxShadow: '0 8px 24px rgba(250,112,154,0.25)' }}>
+              <div style={{ fontSize: '2.5rem', fontWeight: 900, marginBottom: 8, color: '#fff' }}>5★</div>
+              <div style={{ fontSize: 14, color: 'rgba(255,255,255,0.9)', fontWeight: 600 }}>Đánh giá</div>
             </div>
           </div>
         </div>
       </section>
 
       {/* Features */}
-      <section id="features" style={{ padding: '2rem 1.5rem', background: 'var(--background)' }}>
+      <section id="features" style={{ padding: '4rem 1.5rem', background: '#f8fafc' }}>
         <div style={{ maxWidth: 1200, margin: '0 auto' }}>
-          <h2 style={{ fontSize: '1.75rem', fontWeight: 800, textAlign: 'center', marginBottom: 24, color: 'var(--foreground)' }}>✨ Tính Năng</h2>
+          <h2 style={{ fontSize: '2.25rem', fontWeight: 900, textAlign: 'center', marginBottom: 48, color: '#1e293b' }}>Tính Năng Nổi Bật</h2>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 16 }}>
             {[
               { icon: Zap, title: 'Siêu Nhanh', desc: 'Không làm chậm trình duyệt' },

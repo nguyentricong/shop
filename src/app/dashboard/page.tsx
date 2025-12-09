@@ -74,20 +74,21 @@ export default function DashboardPage() {
           <Link href="/" style={{ textDecoration: 'none', color: '#fff', fontWeight: 600, fontSize: 14 }}>← Trang Chủ</Link>
         </div>
       </header>
-      <div style={{ maxWidth: 1200, margin: '0 auto', padding: '6rem 1.5rem 2rem' }}>
+      <div style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', padding: '6rem 1.5rem 2rem' }}>
+      <div style={{ maxWidth: 1200, margin: '0 auto' }}>
         {loading ? (
           <div style={{ textAlign: 'center', padding: '3rem' }}>
-            <p>Đang tải...</p>
+            <p style={{ color: '#fff', fontSize: '1.2rem' }}>Đang tải...</p>
           </div>
         ) : !user ? (
           <div style={{ textAlign: 'center', padding: '3rem' }}>
-            <p>Vui lòng <Link href="/auth/login">đăng nhập</Link></p>
+            <p style={{ color: '#fff', fontSize: '1.2rem' }}>Vui lòng <Link href="/auth/login" style={{ color: '#fff', fontWeight: 700, textDecoration: 'underline' }}>đăng nhập</Link></p>
           </div>
         ) : (
           <>
             {/* User Info */}
-            <div style={{ background: '#fff', borderRadius: 12, border: '1px solid #e2e8f0', padding: 24, marginBottom: 24 }}>
-              <h2 style={{ fontSize: '1.75rem', fontWeight: 800, color: 'var(--foreground)', marginBottom: 8 }}>Xin chào, {user.name}! 👋</h2>
+            <div style={{ background: 'rgba(255, 255, 255, 0.95)', backdropFilter: 'blur(10px)', borderRadius: 16, border: '1px solid rgba(255, 255, 255, 0.3)', padding: 28, marginBottom: 24, boxShadow: '0 10px 30px rgba(0, 0, 0, 0.2)' }}>
+              <h2 style={{ fontSize: '2rem', fontWeight: 900, marginBottom: 12, background: 'linear-gradient(135deg, #667eea, #764ba2)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>Xin chào, {user.name}! 👋</h2>
               <p style={{ color: '#475569', marginBottom: 4 }}>Email: {user.email}</p>
               <p style={{ color: '#475569' }}>Thành viên kể từ: {user.createdAt ? new Date(user.createdAt).toLocaleDateString('vi-VN') : new Date().toLocaleDateString('vi-VN')}</p>
             </div>
@@ -99,7 +100,7 @@ export default function DashboardPage() {
                 { label: 'Licenses Hoạt Động', value: orders.filter(o => o.status === 'completed').length.toString(), icon: '✓' },
                 { label: 'Hỗ Trợ', value: '24/7', icon: '🎧' }
               ].map((stat, i) => (
-            <div key={i} style={{ background: '#fff', borderRadius: 12, border: '1px solid #e2e8f0', padding: 16 }}>
+            <div key={i} style={{ background: 'rgba(255, 255, 255, 0.95)', backdropFilter: 'blur(10px)', borderRadius: 14, border: '1px solid rgba(255, 255, 255, 0.3)', padding: 20, boxShadow: '0 8px 20px rgba(0, 0, 0, 0.15)' }}>
               <div style={{ fontSize: 24, marginBottom: 8 }}>{stat.icon}</div>
               <p style={{ color: '#64748b', fontSize: 13, marginBottom: 6 }}>{stat.label}</p>
               <p style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--foreground)' }}>{stat.value}</p>
@@ -108,8 +109,8 @@ export default function DashboardPage() {
         </div>
 
         {/* Orders */}
-        <div style={{ background: '#fff', borderRadius: 12, border: '1px solid #e2e8f0', padding: 24, marginBottom: 24 }}>
-          <h3 style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--foreground)', marginBottom: 20 }}>📜 Lịch Sử Mua Hàng</h3>
+        <div style={{ background: 'rgba(255, 255, 255, 0.95)', backdropFilter: 'blur(10px)', borderRadius: 16, border: '1px solid rgba(255, 255, 255, 0.3)', padding: 28, marginBottom: 24, boxShadow: '0 10px 30px rgba(0, 0, 0, 0.2)' }}>
+          <h3 style={{ fontSize: '1.75rem', fontWeight: 900, marginBottom: 24, background: 'linear-gradient(135deg, #667eea, #764ba2)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>📜 Lịch Sử Mua Hàng</h3>
           
           <div style={{ overflowX: 'auto' }}>
             <table style={{ width: '100%', borderCollapse: 'collapse' }}>
@@ -195,21 +196,21 @@ export default function DashboardPage() {
         </div>
 
             {/* Help Section */}
-            <div style={{ background: '#dbeafe', border: '1px solid #93c5fd', borderRadius: 12, padding: 24 }}>
-              <h3 style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--foreground)', marginBottom: 12 }}>❓ Cần Hỗ Trợ?</h3>
-              <p style={{ color: '#475569', marginBottom: 16 }}>
+            <div style={{ background: 'rgba(219, 234, 254, 0.9)', backdropFilter: 'blur(10px)', border: '2px solid rgba(147, 197, 253, 0.5)', borderRadius: 14, padding: 28, boxShadow: '0 8px 20px rgba(0, 0, 0, 0.1)' }}>
+              <h3 style={{ fontSize: '1.5rem', fontWeight: 900, marginBottom: 12, background: 'linear-gradient(135deg, #667eea, #764ba2)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>❓ Cần Hỗ Trợ?</h3>
+              <p style={{ color: '#475569', marginBottom: 18, fontSize: '0.95rem' }}>
                 Nếu gặp vấn đề kích hoạt license hoặc có câu hỏi, vui lòng liên hệ với chúng tôi
               </p>
               <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
                 <a
                   href="mailto:support@adblocker.vn"
-                  style={{ background: 'var(--primary)', color: '#fff', padding: '10px 16px', borderRadius: 6, fontWeight: 600, textDecoration: 'none', fontSize: 14 }}
+                  style={{ background: 'linear-gradient(135deg, #667eea, #764ba2)', color: '#fff', padding: '12px 20px', borderRadius: 10, fontWeight: 700, textDecoration: 'none', fontSize: '0.95rem', boxShadow: '0 4px 12px rgba(102, 126, 234, 0.3)', transition: 'all 0.3s' }}
                 >
                   📧 Email Support
                 </a>
                 <a
                   href="#"
-                  style={{ background: '#fff', color: 'var(--primary)', padding: '10px 16px', borderRadius: 6, fontWeight: 600, textDecoration: 'none', fontSize: 14, border: '1px solid var(--primary)' }}
+                  style={{ background: 'rgba(255, 255, 255, 0.95)', color: '#667eea', padding: '12px 20px', borderRadius: 10, fontWeight: 700, textDecoration: 'none', fontSize: '0.95rem', border: '2px solid #667eea', boxShadow: '0 4px 12px rgba(102, 126, 234, 0.15)', transition: 'all 0.3s' }}
                 >
                   💬 Chat Support
                 </a>
@@ -217,6 +218,7 @@ export default function DashboardPage() {
             </div>
           </>
         )}
+      </div>
       </div>
     </>
   );

@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 
 interface User {
   email: string;
@@ -11,6 +11,8 @@ interface User {
 export default function HeaderNav() {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -31,6 +33,16 @@ export default function HeaderNav() {
     checkAuth();
   }, []);
 
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
   const handleLogout = async () => {
     await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' });
     setUser(null);
@@ -49,15 +61,81 @@ export default function HeaderNav() {
           {!loading && (
             <>
               {user ? (
-                <>
-                  <span style={{ fontSize: 14, opacity: 0.9 }}>👤 {user.name}</span>
-                  <Link href="/dashboard" style={{ fontSize: 14, textDecoration: 'none', color: '#fff', fontWeight: 600, opacity: 0.9 }}>
-                    Dashboard
-                  </Link>
-                  <button onClick={handleLogout} style={{ fontSize: 14, background: 'rgba(255,255,255,0.2)', border: 'none', color: '#fff', padding: '0.5rem 1rem', borderRadius: 6, cursor: 'pointer', fontWeight: 600 }}>
-                    Đăng xuất
+                <div style={{ position: 'relative' }} ref={dropdownRef}>
+                  <button
+                    onClick={() => setDropdownOpen(!dropdownOpen)}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.5rem',
+                      fontSize: 14,
+                      background: 'rgba(255,255,255,0.2)',
+                      border: 'none',
+                      color: '#fff',
+                      padding: '0.5rem 1rem',
+                      borderRadius: 6,
+                      cursor: 'pointer',
+                      fontWeight: 600
+                    }}
+                  >
+                    <span>👤 {user.name}</span>
+                    <span style={{ fontSize: 10 }}>▼</span>
                   </button>
-                </>
+                  {dropdownOpen && (
+                    <div style={{
+                      position: 'absolute',
+                      top: 'calc(100% + 0.5rem)',
+                      right: 0,
+                      background: '#fff',
+                      border: '1px solid #e5e7eb',
+                      borderRadius: '0.5rem',
+                      boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05)',
+                      minWidth: '200px',
+                      overflow: 'hidden',
+                      zIndex: 100
+                    }}>
+                      <Link
+                        href="/dashboard"
+                        onClick={() => setDropdownOpen(false)}
+                        style={{
+                          display: 'block',
+                          padding: '0.75rem 1rem',
+                          color: '#374151',
+                          textDecoration: 'none',
+                          transition: 'background-color 0.2s',
+                          borderBottom: '1px solid #e5e7eb'
+                        }}
+                        onMouseEnter={(e) => e.currentTarget.style.background = '#f3f4f6'}
+                        onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
+                      >
+                        📊 Dashboard
+                      </Link>
+                      <button
+                        onClick={() => {
+                          setDropdownOpen(false);
+                          handleLogout();
+                        }}
+                        style={{
+                          display: 'block',
+                          width: '100%',
+                          padding: '0.75rem 1rem',
+                          color: '#ef4444',
+                          background: 'transparent',
+                          border: 'none',
+                          textAlign: 'left',
+                          cursor: 'pointer',
+                          fontWeight: 500,
+                          fontSize: '1rem',
+                          transition: 'background-color 0.2s'
+                        }}
+                        onMouseEnter={(e) => e.currentTarget.style.background = '#fef2f2'}
+                        onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
+                      >
+                        🚪 Đăng xuất
+                      </button>
+                    </div>
+                  )}
+                </div>
               ) : (
                 <>
                   <Link href="/auth/login" style={{ fontSize: 14, textDecoration: 'none', color: '#fff', fontWeight: 600, opacity: 0.9 }}>

@@ -31,9 +31,10 @@ export default function RegisterPage() {
   };
 
   return (
-    <div style={{ minHeight: '100vh', background: '#f8fafc', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '2rem' }}>
-      <div style={{ width: '100%', maxWidth: 420, background: '#fff', border: '1px solid #e2e8f0', borderRadius: 12, padding: 32 }}>
-        <h1 style={{ fontSize: '1.5rem', fontWeight: 800, marginBottom: 16 }}>Đăng ký</h1>
+    <div style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '2rem' }}>
+      <div style={{ width: '100%', maxWidth: 420, background: 'rgba(255, 255, 255, 0.95)', backdropFilter: 'blur(10px)', border: '1px solid rgba(255, 255, 255, 0.3)', borderRadius: 16, padding: 40, boxShadow: '0 20px 60px rgba(0, 0, 0, 0.3)' }}>
+        <h1 style={{ fontSize: '2rem', fontWeight: 900, marginBottom: 8, background: 'linear-gradient(135deg, #f093fb, #f5576c)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>Đăng ký</h1>
+        <p style={{ color: '#64748b', marginBottom: 24, fontSize: '0.95rem' }}>Tạo tài khoản miễn phí ngay!</p>
         <form onSubmit={handleRegister} style={{ display: 'grid', gap: 12 }}>
           <div style={{ display: 'grid', gap: 6 }}>
             <label>Họ tên</label>
@@ -42,7 +43,9 @@ export default function RegisterPage() {
               onChange={e => setName(e.target.value)}
               required
               minLength={2}
-              style={{ border: '1px solid #cbd5e1', borderRadius: 8, padding: '10px 12px' }}
+              style={{ border: '2px solid #e2e8f0', borderRadius: 10, padding: '12px 14px', fontSize: '1rem', transition: 'all 0.2s', outline: 'none' }}
+              onFocus={(e) => e.target.style.borderColor = '#f093fb'}
+              onBlur={(e) => e.target.style.borderColor = '#e2e8f0'}
             />
           </div>
           <div style={{ display: 'grid', gap: 6 }}>
@@ -52,7 +55,9 @@ export default function RegisterPage() {
               value={email}
               onChange={e => setEmail(e.target.value)}
               required
-              style={{ border: '1px solid #cbd5e1', borderRadius: 8, padding: '10px 12px' }}
+              style={{ border: '2px solid #e2e8f0', borderRadius: 10, padding: '12px 14px', fontSize: '1rem', transition: 'all 0.2s', outline: 'none' }}
+              onFocus={(e) => e.target.style.borderColor = '#f093fb'}
+              onBlur={(e) => e.target.style.borderColor = '#e2e8f0'}
             />
           </div>
           <div style={{ display: 'grid', gap: 6 }}>
@@ -63,13 +68,15 @@ export default function RegisterPage() {
               onChange={e => setPassword(e.target.value)}
               required
               minLength={6}
-              style={{ border: '1px solid #cbd5e1', borderRadius: 8, padding: '10px 12px' }}
+              style={{ border: '2px solid #e2e8f0', borderRadius: 10, padding: '12px 14px', fontSize: '1rem', transition: 'all 0.2s', outline: 'none' }}
+              onFocus={(e) => e.target.style.borderColor = '#f093fb'}
+              onBlur={(e) => e.target.style.borderColor = '#e2e8f0'}
             />
           </div>
           {error && <p style={{ color: '#dc2626', fontSize: 14 }}>{error}</p>}
           {success && <p style={{ color: '#16a34a', fontSize: 14 }}>{success}</p>}
-          <button type="submit" disabled={loading} style={{ background: 'var(--primary)', color: '#fff', padding: '12px', borderRadius: 8, fontWeight: 700, border: 'none', cursor: 'pointer' }}>
-            {loading ? 'Đang đăng ký...' : 'Đăng ký'}
+          <button type="submit" disabled={loading} style={{ background: 'linear-gradient(135deg, #f093fb, #f5576c)', color: '#fff', padding: '14px', borderRadius: 10, fontWeight: 700, border: 'none', cursor: loading ? 'not-allowed' : 'pointer', fontSize: '1rem', boxShadow: '0 4px 15px rgba(240, 147, 251, 0.4)', transition: 'all 0.3s', opacity: loading ? 0.7 : 1 }}>
+            {loading ? '⏳ Đang đăng ký...' : '✨ Đăng ký ngay'}
           </button>
         </form>
 
