@@ -2,51 +2,38 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { Check } from 'lucide-react';
+import { Check, Copy } from 'lucide-react';
+import Image from 'next/image';
 
 export default function BuyPage() {
   const [formData, setFormData] = useState({
     email: '',
-    name: '',
-    paymentMethod: 'momo'
+    name: ''
   });
-  const [step, setStep] = useState<'info' | 'payment' | 'success'>('info');
-  const [licenseKey, setLicenseKey] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [step, setStep] = useState<'info' | 'qr' | 'success'>('info');
+  const [copied, setCopied] = useState(false);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
-    
-    try {
-      const response = await fetch('/api/purchase', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
-      });
-      
-      const data = await response.json();
-      
-      if (response.ok) {
-        // Save user info to localStorage
-        if (typeof window !== 'undefined') {
-          localStorage.setItem('userEmail', formData.email);
-          localStorage.setItem('userName', formData.name);
-          if (data.orderId) {
-            localStorage.setItem('currentOrderId', data.orderId);
-          }
-        }
+    if (formData.email && formData.name) {
+      setStep('qr');
+    }
+  };
 
-        // Nếu cần redirect đến payment gateway
-        if (data.paymentRequired && data.paymentUrl) {
-          window.location.href = data.paymentUrl;
-          return;
-        }
+  const copyEmail = () => {
+    navigator.clipboard.writeText(formData.email);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  const handlePaymentConfirm = () => {
+    setStep('success');
+  };
 
         // Nếu là bank transfer, hiện thông tin
         if (data.paymentMethod === 'bank') {
@@ -137,30 +124,6 @@ export default function BuyPage() {
                 />
               </div>
 
-              {/* Payment Method */}
-              <div>
-                <label style={{ display: 'block', color: 'var(--foreground)', fontWeight: 600, marginBottom: 8 }}>Phương Thức Thanh Toán *</label>
-                <select
-                  name="paymentMethod"
-                  value={formData.paymentMethod}
-                  onChange={handleInputChange}
-                  style={{ width: '100%', background: '#fff', border: '2px solid #e2e8f0', borderRadius: 10, padding: '12px 14px', fontSize: '1rem', color: 'var(--foreground)', transition: 'all 0.2s', outline: 'none', cursor: 'pointer' }}
-                  onFocus={(e) => e.target.style.borderColor = '#667eea'}
-                  onBlur={(e) => e.target.style.borderColor = '#e2e8f0'}
-                >
-                  <option value="momo">🎯 MoMo - Quét QR (Nhanh nhất)</option>
-                  <option value="vnpay">💳 VNPay - Thẻ ATM/Visa</option>
-                  <option value="bank">🏦 Chuyển Khoản Ngân Hàng</option>
-                  <option value="stripe">💵 Stripe - Visa/Mastercard (Quốc tế)</option>
-                </select>
-                <p style={{ color: '#64748b', fontSize: 12, marginTop: 6 }}>
-                  {formData.paymentMethod === 'momo' && '⚡ Thanh toán ngay qua QR Code, nhận key trong 1 phút'}
-                  {formData.paymentMethod === 'vnpay' && '🔒 Thanh toán an toàn qua VNPay'}
-                  {formData.paymentMethod === 'bank' && '⏱️ Xác nhận trong 5-10 phút sau khi chuyển khoản'}
-                  {formData.paymentMethod === 'stripe' && '🌍 Hỗ trợ thanh toán quốc tế, nhận key ngay'}
-                </p>
-              </div>
-
               {/* Order Summary */}
               <div style={{ background: 'linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1))', border: '2px solid rgba(102, 126, 234, 0.3)', borderRadius: 12, padding: 20, boxShadow: '0 4px 12px rgba(102, 126, 234, 0.15)' }}>
                 <h3 style={{ color: 'var(--foreground)', fontWeight: 700, marginBottom: 12 }}>Tóm Tắt Đơn Hàng</h3>
@@ -184,66 +147,143 @@ export default function BuyPage() {
               </button>
 
               {/* Security Info */}
+              {/* Pricing */}
+              <div style={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', borderRadius: 12, padding: 20, marginTop: 10 }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', color: '#fff' }}>
+                  <span style={{ fontSize: 18, fontWeight: 700 }}>Giá</span>
+                  <span style={{ fontSize: 28, fontWeight: 900 }}>49.000₫</span>
+                </div>
+              </div>
+
+              {/* Submit Button */}
+              <button
+                type="submit"
+                style={{ width: '100%', background: 'var(--primary)', color: '#fff', fontWeight: 700, padding: '14px', borderRadius: 10, border: 'none', cursor: 'pointer', fontSize: 16, marginTop: 8 }}
+              >
+                Tiếp Tục Thanh Toán →
+              </button>
+
               <p style={{ textAlign: 'center', fontSize: 12, color: '#64748b' }}>
-                ✓ Thanh toán an toàn với SSL encryption | ✓ Không lưu trữ thông tin thẻ
+                ✓ Bảo mật 100% | ✓ Hỗ trợ 24/7
               </p>
             </form>
           </div>
         )}
 
+        {step === 'qr' && (
+          <div style={{ background: 'rgba(255, 255, 255, 0.95)', backdropFilter: 'blur(10px)', borderRadius: 16, border: '1px solid rgba(255, 255, 255, 0.3)', padding: 32, boxShadow: '0 20px 60px rgba(0, 0, 0, 0.3)' }}>
+            <h1 style={{ fontSize: '1.75rem', fontWeight: 900, marginBottom: 8, background: 'linear-gradient(135deg, #667eea, #764ba2)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>Quét Mã QR MoMo</h1>
+            <p style={{ color: '#64748b', marginBottom: 24, fontSize: '0.95rem' }}>Thanh toán 49.000₫ qua MoMo</p>
+
+            {/* QR Code */}
+            <div style={{ textAlign: 'center', marginBottom: 24 }}>
+              <Image
+                src="/momo.jpg"
+                alt="MoMo QR Code"
+                width={300}
+                height={300}
+                style={{ borderRadius: 12, border: '2px solid #e2e8f0', maxWidth: '100%', height: 'auto' }}
+              />
+            </div>
+
+            {/* Instructions */}
+            <div style={{ background: '#fff3cd', border: '2px solid #ffc107', borderRadius: 12, padding: 16, marginBottom: 20 }}>
+              <h3 style={{ color: '#856404', fontWeight: 700, marginBottom: 12, fontSize: 16 }}>⚠️ QUAN TRỌNG - Đọc Kỹ:</h3>
+              <ol style={{ color: '#856404', fontSize: 14, lineHeight: 1.7, paddingLeft: 20, margin: 0 }}>
+                <li style={{ marginBottom: 8 }}>Mở app <strong>MoMo</strong> → Quét mã QR phía trên</li>
+                <li style={{ marginBottom: 8 }}>Nhập số tiền: <strong>49.000₫</strong></li>
+                <li style={{ marginBottom: 8 }}><strong>BẮT BUỘC:</strong> Ghi email của bạn vào phần <strong>Lời nhắn</strong>:</li>
+              </ol>
+              
+              <div style={{ background: '#fff', border: '2px dashed #667eea', borderRadius: 8, padding: 12, marginTop: 12, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10 }}>
+                <div style={{ flex: 1 }}>
+                  <p style={{ color: '#64748b', fontSize: 11, marginBottom: 4 }}>EMAIL CỦA BẠN:</p>
+                  <p style={{ color: '#667eea', fontWeight: 700, fontSize: 16, fontFamily: 'monospace', wordBreak: 'break-all' }}>{formData.email}</p>
+                </div>
+                <button
+                  onClick={copyEmail}
+                  style={{ background: copied ? '#10b981' : '#667eea', color: '#fff', padding: '8px 12px', borderRadius: 6, border: 'none', cursor: 'pointer', fontSize: 12, fontWeight: 600, whiteSpace: 'nowrap' }}
+                >
+                  {copied ? '✓ Đã Copy' : <><Copy size={14} style={{ marginRight: 4, display: 'inline' }} />Copy</>}
+                </button>
+              </div>
+
+              <p style={{ color: '#856404', fontSize: 13, marginTop: 12, fontWeight: 600 }}>💡 Không có email trong lời nhắn = KHÔNG nhận được license key!</p>
+            </div>
+
+            {/* After Payment */}
+            <div style={{ background: '#f8fafc', borderRadius: 12, padding: 16, marginBottom: 20 }}>
+              <h3 style={{ color: 'var(--foreground)', fontWeight: 700, marginBottom: 12, fontSize: 15 }}>✅ Sau Khi Chuyển Khoản:</h3>
+              <p style={{ color: '#64748b', fontSize: 14, lineHeight: 1.7 }}>Admin sẽ kiểm tra và gửi <strong>License Key + Extension</strong> qua email <strong>{formData.email}</strong> trong vòng <strong>1-2 giờ</strong> (giờ hành chính).</p>
+            </div>
+
+            <button
+              onClick={handlePaymentConfirm}
+              style={{ width: '100%', background: '#10b981', color: '#fff', fontWeight: 700, padding: '14px', borderRadius: 10, border: 'none', cursor: 'pointer', fontSize: 16 }}
+            >
+              ✓ Tôi Đã Chuyển Khoản
+            </button>
+
+            <button
+              onClick={() => setStep('info')}
+              style={{ width: '100%', background: 'transparent', color: '#667eea', fontWeight: 600, padding: '12px', border: 'none', cursor: 'pointer', fontSize: 14, marginTop: 10 }}
+            >
+              ← Quay Lại
+            </button>
+          </div>
+        )}
+
         {step === 'success' && (
           <div style={{ background: 'rgba(255, 255, 255, 0.95)', backdropFilter: 'blur(10px)', borderRadius: 16, border: '2px solid #10b981', padding: 32, textAlign: 'center', boxShadow: '0 20px 60px rgba(0, 0, 0, 0.3)' }}>
-            <div style={{ width: 56, height: 56, background: 'var(--success)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px' }}>
+            <div style={{ width: 56, height: 56, background: '#10b981', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px' }}>
               <Check style={{ width: 32, height: 32, color: '#fff' }} />
             </div>
 
-            <h1 style={{ fontSize: '1.75rem', fontWeight: 800, color: 'var(--foreground)', marginBottom: 8 }}>Thanh Toán Thành Công!</h1>
-            <p style={{ color: '#475569', marginBottom: 20 }}>License Key của bạn sẽ được gửi qua email</p>
+            <h1 style={{ fontSize: '1.75rem', fontWeight: 800, color: 'var(--foreground)', marginBottom: 8 }}>Đã Ghi Nhận!</h1>
+            <p style={{ color: '#475569', marginBottom: 20, lineHeight: 1.7 }}>Cảm ơn bạn đã thanh toán. Admin sẽ xác nhận và gửi <strong>License Key + Extension</strong> qua email:</p>
 
-            {/* License Key Display */}
-            <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: 16, marginBottom: 20 }}>
-              <p style={{ color: '#64748b', fontSize: 12, marginBottom: 8 }}>LICENSE KEY</p>
-              <p style={{ color: 'var(--foreground)', fontFamily: 'monospace', fontSize: 16, marginBottom: 12, wordBreak: 'break-all' }}>{licenseKey}</p>
-              <button
-                onClick={() => navigator.clipboard.writeText(licenseKey)}
-                style={{ background: 'var(--primary)', color: '#fff', padding: '8px 16px', borderRadius: 6, border: 'none', cursor: 'pointer', fontSize: 14, fontWeight: 600 }}
-              >
-                📋 Sao Chép
-              </button>
+            {/* Email Display */}
+            <div style={{ background: '#f0fdf4', border: '2px solid #10b981', borderRadius: 12, padding: 16, marginBottom: 24 }}>
+              <p style={{ color: '#059669', fontWeight: 700, fontSize: 18, fontFamily: 'monospace', wordBreak: 'break-all' }}>{formData.email}</p>
             </div>
 
-            {/* Next Steps */}
-            <div style={{ textAlign: 'left', marginBottom: 20 }}>
-              <h3 style={{ color: 'var(--foreground)', fontWeight: 700, marginBottom: 12 }}>Bước Tiếp Theo:</h3>
-              <ol style={{ listStyle: 'none', padding: 0, display: 'flex', flexDirection: 'column', gap: 10 }}>
-                {[
-                  '1. Cài đặt Extension từ Chrome Web Store',
-                  '2. Mở Extension → Paste License Key',
-                  '3. Nhấp "Kích Hoạt"',
-                  '4. Tận hưởng YouTube không quảng cáo! 🎉'
-                ].map((step, i) => (
-                  <li key={i} style={{ display: 'flex', alignItems: 'center', gap: 10, color: '#475569', fontSize: 14 }}>
-                    <span style={{ width: 24, height: 24, background: 'var(--success)', color: '#fff', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 700, flexShrink: 0 }}>✓</span>
-                    <span>{step}</span>
-                  </li>
-                ))}
-              </ol>
+            {/* Timeline */}
+            <div style={{ textAlign: 'left', marginBottom: 24 }}>
+              <h3 style={{ color: 'var(--foreground)', fontWeight: 700, marginBottom: 12, fontSize: 16 }}>⏱️ Thời Gian Xử Lý:</h3>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                <div style={{ display: 'flex', gap: 10 }}>
+                  <div style={{ width: 32, height: 32, background: '#667eea', color: '#fff', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14, fontWeight: 700, flexShrink: 0 }}>1</div>
+                  <div>
+                    <p style={{ color: 'var(--foreground)', fontWeight: 600, marginBottom: 2 }}>Admin kiểm tra thanh toán</p>
+                    <p style={{ color: '#64748b', fontSize: 13 }}>Trong vòng 1-2 giờ (giờ hành chính)</p>
+                  </div>
+                </div>
+                <div style={{ display: 'flex', gap: 10 }}>
+                  <div style={{ width: 32, height: 32, background: '#667eea', color: '#fff', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14, fontWeight: 700, flexShrink: 0 }}>2</div>
+                  <div>
+                    <p style={{ color: 'var(--foreground)', fontWeight: 600, marginBottom: 2 }}>Tạo License Key</p>
+                    <p style={{ color: '#64748b', fontSize: 13 }}>Key chỉ dành riêng cho bạn</p>
+                  </div>
+                </div>
+                <div style={{ display: 'flex', gap: 10 }}>
+                  <div style={{ width: 32, height: 32, background: '#10b981', color: '#fff', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14, fontWeight: 700, flexShrink: 0 }}>3</div>
+                  <div>
+                    <p style={{ color: 'var(--foreground)', fontWeight: 600, marginBottom: 2 }}>Gửi Email với Key + Extension</p>
+                    <p style={{ color: '#64748b', fontSize: 13 }}>Kiểm tra cả Spam/Junk nếu không thấy</p>
+                  </div>
+                </div>
+              </div>
             </div>
 
-            {/* Download Button */}
-            <a
-              href="https://chrome.google.com/webstore"
-              target="_blank"
-              rel="noopener noreferrer"
-              style={{ display: 'inline-block', background: 'var(--primary)', color: '#fff', fontWeight: 700, padding: '12px 24px', borderRadius: 8, textDecoration: 'none', fontSize: 15, marginBottom: 16 }}
-            >
-              ⬇️ Tải Extension từ Chrome Web Store
-            </a>
+            {/* Support */}
+            <div style={{ background: '#f8fafc', borderRadius: 12, padding: 16, textAlign: 'left' }}>
+              <h3 style={{ color: 'var(--foreground)', fontWeight: 700, marginBottom: 8, fontSize: 15 }}>💬 Cần Hỗ Trợ?</h3>
+              <p style={{ color: '#64748b', fontSize: 14, lineHeight: 1.7 }}>Nếu sau <strong>2 giờ</strong> chưa nhận được email, vui lòng liên hệ: <a href="mailto:support@adblockpro.vn" style={{ color: '#667eea', textDecoration: 'none', fontWeight: 600 }}>support@adblockpro.vn</a></p>
+            </div>
 
-            {/* Support Info */}
-            <p style={{ color: '#64748b', fontSize: 13 }}>
-              Cần hỗ trợ? <a href="mailto:support@adblocker.vn" style={{ color: 'var(--primary)', textDecoration: 'none' }}>Liên hệ: support@adblocker.vn</a>
-            </p>
+            <Link href="/" style={{ display: 'inline-block', background: '#667eea', color: '#fff', fontWeight: 700, padding: '12px 32px', borderRadius: 10, textDecoration: 'none', fontSize: 15, marginTop: 20 }}>
+              ← Về Trang Chủ
+            </Link>
           </div>
         )}
         </div>

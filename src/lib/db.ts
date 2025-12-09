@@ -62,7 +62,7 @@ if (!connectionString && typeof window === 'undefined') {
   console.warn('DATABASE_URL is not set. Please configure it in .env.local for Postgres.');
 }
 
-const pool = connectionString
+export const pool = connectionString
   ? new Pool({
       connectionString,
       ssl: process.env.DATABASE_SSL === 'true' ? { rejectUnauthorized: false } : undefined,
