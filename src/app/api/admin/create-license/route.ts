@@ -34,7 +34,7 @@ export async function POST(req: NextRequest) {
     try {
       // Check if license key already exists
       const existingKey = await client.query(
-        'SELECT id FROM licenses WHERE key = $1',
+        'SELECT key FROM licenses WHERE key = $1',
         [licenseKey]
       );
 
