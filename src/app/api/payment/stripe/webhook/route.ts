@@ -33,12 +33,14 @@ export async function POST(request: NextRequest) {
       // Activate license
       await db.activateLicense(order.licenseKey);
 
-      // Send email
+      // Send email with license key and download links
+      const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://ablockyoutube.vercel.app';
       await sendLicenseEmail({
         to: order.email,
         name: order.name,
         licenseKey: order.licenseKey,
-        downloadUrl: 'https://chrome.google.com/webstore/detail/adblock-pro'
+        baseUrl,
+        downloadUrl: `${baseUrl}/api/download/extension`
       });
 
       console.log(`✅ Stripe payment success: ${orderId}`);

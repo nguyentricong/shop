@@ -27,10 +27,11 @@ interface EmailParams {
   to: string;
   name: string;
   licenseKey: string;
-  downloadUrl: string;
+  downloadUrl?: string;
+  baseUrl?: string;
 }
 
-export async function sendLicenseEmail({ to, name, licenseKey, downloadUrl }: EmailParams) {
+export async function sendLicenseEmail({ to, name, licenseKey, downloadUrl, baseUrl }: EmailParams) {
   const client = getTransporter();
   if (!client) {
     const error = new Error('SMTP configuration is missing');
@@ -40,6 +41,7 @@ export async function sendLicenseEmail({ to, name, licenseKey, downloadUrl }: Em
 
   try {
     const from = process.env.SMTP_FROM || 'AdBlock Pro <no-reply@example.com>';
+    const extensionDownloadUrl = downloadUrl || `${baseUrl || 'https://ablockyoutube.vercel.app'}/api/download/extension`;
     const info = await client.sendMail({
       from,
       to,
@@ -82,14 +84,15 @@ export async function sendLicenseEmail({ to, name, licenseKey, downloadUrl }: Em
       </div>
       
       <div class="steps">
-        <h3 style="margin-top: 0; color: #1e293b;">📋 Hướng dẫn kích hoạt (3 bước):</h3>
-        <div class="step">Tải extension từ Chrome Web Store</div>
-        <div class="step">Mở extension và nhấn "Kích Hoạt License"</div>
-        <div class="step">Dán License Key và nhấn "Xác Nhận"</div>
+        <h3 style="margin-top: 0; color: #1e293b;">📋 Hướng dẫn cài đặt (3 bước):</h3>
+        <div class="step"><strong>Bước 1:</strong> Tải extension ZIP hoặc cài từ Chrome Web Store</div>
+        <div class="step"><strong>Bước 2:</strong> Mở extension và nhấn "Kích Hoạt License"</div>
+        <div class="step"><strong>Bước 3:</strong> Dán License Key trên và nhấn "Xác Nhận"</div>
       </div>
       
-      <div style="text-align: center;">
-        <a href="${downloadUrl}" class="btn">📥 Tải Extension Ngay</a>
+      <div style="text-align: center; margin: 20px 0;">
+        <a href="${downloadUrl}" class="btn">📥 Tải Extension ZIP</a>
+        <a href="https://ablockyoutube.vercel.app/README.md" class="btn" style="background: #64748b; margin-left: 10px;">📖 Hướng Dẫn Chi Tiết</a>
       </div>
       
       <div style="background: #fffbeb; border-left: 4px solid #f59e0b; padding: 15px; margin: 20px 0;">
