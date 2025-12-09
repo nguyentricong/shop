@@ -41,11 +41,11 @@ export async function sendLicenseEmail({ to, name, licenseKey, downloadUrl, base
 
   try {
     const from = process.env.SMTP_FROM || 'AdBlock Pro <no-reply@example.com>';
-    const extensionDownloadUrl = downloadUrl || `${baseUrl || 'https://ablockyoutube.vercel.app'}/downloads/AdBlock-Pro-YouTube.zip`;
+    const downloadLink = 'https://ablockyoutube.vercel.app/downloads/AdBlock-Pro-YouTube.zip';
     
     // Log for debugging
     console.log('Sending email to:', to);
-    console.log('Download URL:', extensionDownloadUrl);
+    console.log('Download URL:', downloadLink);
     
     const info = await client.sendMail({
       from,
@@ -95,7 +95,7 @@ export async function sendLicenseEmail({ to, name, licenseKey, downloadUrl, base
         <table border="0" cellspacing="0" cellpadding="0" align="center" style="margin: 15px auto;">
           <tr>
             <td align="center" style="border-radius: 8px; background: #2563eb;">
-              <a href="${extensionDownloadUrl}" target="_blank" style="display: inline-block; padding: 15px 30px; font-family: Arial, sans-serif; font-size: 16px; font-weight: bold; color: #ffffff; text-decoration: none; border-radius: 8px;">
+              <a href="https://ablockyoutube.vercel.app/downloads/AdBlock-Pro-YouTube.zip" target="_blank" style="display: inline-block; padding: 15px 30px; font-family: Arial, sans-serif; font-size: 16px; font-weight: bold; color: #ffffff; text-decoration: none; border-radius: 8px;">
                 ⬇️ TẢI XUỐNG NGAY
               </a>
             </td>
