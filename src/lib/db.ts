@@ -26,6 +26,16 @@ export interface License {
   expiryAt?: Date;
   plan: LicensePlan;
   active: boolean;
+  maxDevices?: number;
+}
+
+export interface LicenseActivation {
+  id: string;
+  licenseKey: string;
+  deviceId: string;
+  deviceName?: string;
+  activatedAt: Date;
+  lastUsedAt: Date;
 }
 
 export interface User {
@@ -77,7 +87,18 @@ const initPromise = (async () => {
       activated_at TIMESTAMPTZ,
       expiry_at TIMESTAMPTZ,
       plan TEXT NOT NULL,
-      active BOOLEAN NOT NULL DEFAULT FALSE
+      active BOOLEAN NOT NULL DEFAULT FALSE,
+      max_devices INTEGER NOT NULL DEFAULT 3
+    );
+
+    CREATE TABLE IF NOT EXISTS license_activations (
+      id TEXT PRIMARY KEY,
+      license_key TEXT NOT NULL REFERENCES licenses(key),
+      device_id TEXT NOT NULL,
+      device_name TEXT,
+      activated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+      last_used_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+      UNIQUE(license_key, device_id)
     );
 
     CREATE TABLE IF NOT EXISTS users (
@@ -92,6 +113,7 @@ const initPromise = (async () => {
     CREATE INDEX IF NOT EXISTS idx_orders_email ON orders(email);
     CREATE INDEX IF NOT EXISTS idx_orders_license_key ON orders(license_key);
     CREATE INDEX IF NOT EXISTS idx_licenses_email ON licenses(email);
+    CREATE INDEX IF NOT EXISTS idx_license_activations_key ON license_activations(license_key);
     CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
   `);
 })();
@@ -117,6 +139,16 @@ interface DbLicenseRow {
   expiry_at: Date | null;
   plan: LicensePlan;
   active: boolean;
+  max_devices?: number;
+}
+
+interface DbLicenseActivationRow {
+  id: string;
+  license_key: string;
+  device_id: string;
+  device_name: string | null;
+  activated_at: Date;
+  last_used_at: Date;
 }
 
 interface DbUserRow {
@@ -152,7 +184,20 @@ function mapLicense(row?: DbLicenseRow | null): License | undefined {
     activatedAt: row.activated_at ? new Date(row.activated_at) : undefined,
     expiryAt: row.expiry_at ? new Date(row.expiry_at) : undefined,
     plan: row.plan,
-    active: row.active
+    active: row.active,
+    maxDevices: row.max_devices || 3
+  };
+}
+
+function mapLicenseActivation(row?: DbLicenseActivationRow | null): LicenseActivation | undefined {
+  if (!row) return undefined;
+  return {
+    id: row.id,
+    licenseKey: row.license_key,
+    deviceId: row.device_id,
+    deviceName: row.device_name || undefined,
+    activatedAt: new Date(row.activated_at),
+    lastUsedAt: new Date(row.last_used_at)
   };
 }
 
@@ -276,6 +321,75 @@ export const db = {
     await initPromise;
     const { rows } = await pool.query<DbLicenseRow>(`SELECT * FROM licenses ORDER BY activated_at DESC NULLS LAST`);
     return rows.map(mapLicense).filter(Boolean) as License[];
+  },
+
+  async activateLicenseDevice(licenseKey: string, deviceId: string, deviceName?: string): Promise<{ allowed: boolean; message: string; activeDevices?: number }> {
+    if (!pool) throw new Error('DATABASE_URL not configured');
+    await initPromise;
+
+    // Get license and check max devices
+    const licenseResult = await pool.query<DbLicenseRow>(`SELECT * FROM licenses WHERE key = $1`, [licenseKey]);
+    const license = licenseResult.rows[0];
+
+    if (!license) {
+      return { allowed: false, message: 'License not found' };
+    }
+
+    const maxDevices = license.max_devices || 3;
+
+    // Check if device already activated
+    const existingResult = await pool.query<DbLicenseActivationRow>(
+      `SELECT * FROM license_activations WHERE license_key = $1 AND device_id = $2`,
+      [licenseKey, deviceId]
+    );
+
+    if (existingResult.rows.length > 0) {
+      // Device already activated, just update last_used_at
+      await pool.query(
+        `UPDATE license_activations SET last_used_at = NOW() WHERE license_key = $1 AND device_id = $2`,
+        [licenseKey, deviceId]
+      );
+      return { allowed: true, message: 'Device already activated', activeDevices: existingResult.rows.length };
+    }
+
+    // Count active devices
+    const countResult = await pool.query<{ count: number }>(
+      `SELECT COUNT(*) as count FROM license_activations WHERE license_key = $1`,
+      [licenseKey]
+    );
+
+    const activeDevices = parseInt((countResult.rows[0]?.count || 0).toString(), 10);
+
+    if (activeDevices >= maxDevices) {
+      return { allowed: false, message: `Device limit reached (${maxDevices} devices max)`, activeDevices };
+    }
+
+    // Add new device activation
+    const id = `act_${crypto.randomUUID()}`;
+    await pool.query(
+      `INSERT INTO license_activations (id, license_key, device_id, device_name, activated_at, last_used_at)
+       VALUES ($1, $2, $3, $4, NOW(), NOW())`,
+      [id, licenseKey, deviceId, deviceName || null]
+    );
+
+    return { allowed: true, message: 'Device activated', activeDevices: activeDevices + 1 };
+  },
+
+  async getLicenseActivations(licenseKey: string): Promise<LicenseActivation[]> {
+    if (!pool) throw new Error('DATABASE_URL not configured');
+    await initPromise;
+    const { rows } = await pool.query<DbLicenseActivationRow>(
+      `SELECT * FROM license_activations WHERE license_key = $1 ORDER BY last_used_at DESC`,
+      [licenseKey]
+    );
+    return rows.map(mapLicenseActivation).filter(Boolean) as LicenseActivation[];
+  },
+
+  async removeDeviceActivation(activationId: string): Promise<boolean> {
+    if (!pool) throw new Error('DATABASE_URL not configured');
+    await initPromise;
+    const { rowCount } = await pool.query(`DELETE FROM license_activations WHERE id = $1`, [activationId]);
+    return (rowCount ?? 0) > 0;
   },
 
   async createUser(user: { email: string; name: string; passwordHash?: string | null; provider: AuthProvider }): Promise<User> {

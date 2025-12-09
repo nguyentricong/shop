@@ -1,22 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import { validateLicenseSchema } from '@/lib/validation';
+import { ZodError, z } from 'zod';
 import { checkRateLimit } from '@/lib/rate-limit';
-import { ZodError } from 'zod';
-import crypto from 'crypto';
 
-// Generate device fingerprint based on headers
-function generateDeviceFingerprint(request: NextRequest): string {
-  const userAgent = request.headers.get('user-agent') || 'unknown';
-  const acceptLanguage = request.headers.get('accept-language') || 'unknown';
-  
-  // Combine user agent and language for a simple device ID
-  // In production, you'd use more sophisticated fingerprinting
-  const combined = `${userAgent}|${acceptLanguage}`;
-  return crypto.createHash('sha256').update(combined).digest('hex').substring(0, 16);
-}
+// Validation schema
+const deactivateDeviceSchema = z.object({
+  licenseKey: z.string().min(1, 'License key is required'),
+  activationId: z.string().min(1, 'Activation ID is required'),
+});
 
-// Handle CORS preflight request
+// Handle CORS preflight
 export async function OPTIONS(request: NextRequest) {
   return new NextResponse(null, {
     status: 200,
@@ -35,7 +28,7 @@ export async function POST(request: NextRequest) {
     const rateLimitResult = await checkRateLimit(request, 'api');
     if (!rateLimitResult.success) {
       return NextResponse.json(
-        { valid: false, error: rateLimitResult.error },
+        { success: false, error: rateLimitResult.error },
         { 
           status: 429,
           headers: {
@@ -50,32 +43,14 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     
     // Validate input
-    const validatedData = validateLicenseSchema.parse(body);
-    const { licenseKey, email } = validatedData;
+    const validatedData = deactivateDeviceSchema.parse(body);
+    const { licenseKey, activationId } = validatedData;
 
-    // Validate license from database
-    const result = await db.validateLicense(licenseKey);
-    
-    if (!result.valid) {
-      return NextResponse.json(
-        { valid: false, message: result.message },
-        { 
-          status: 400,
-          headers: {
-            'Access-Control-Allow-Origin': '*',
-            'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-            'Access-Control-Allow-Headers': 'Content-Type',
-          }
-        }
-      );
-    }
-
-    // Get license details
+    // Verify license exists
     const license = await db.getLicense(licenseKey);
-    
     if (!license) {
       return NextResponse.json(
-        { valid: false, message: 'License không tồn tại' },
+        { success: false, message: 'License not found' },
         { 
           status: 404,
           headers: {
@@ -87,10 +62,13 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Check if email matches (if provided)
-    if (email && license.email.toLowerCase() !== email.toLowerCase()) {
+    // Get activations to verify the activation belongs to this license
+    const activations = await db.getLicenseActivations(licenseKey);
+    const activationExists = activations.some(a => a.id === activationId);
+
+    if (!activationExists) {
       return NextResponse.json(
-        { valid: false, message: 'Email không khớp với License Key' },
+        { success: false, message: 'Activation not found or does not belong to this license' },
         { 
           status: 403,
           headers: {
@@ -102,25 +80,14 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Auto-activate if not activated yet
-    if (!license.active) {
-      await db.activateLicense(licenseKey);
-    }
+    // Remove the device activation
+    const removed = await db.removeDeviceActivation(activationId);
 
-    // Device-based activation (limit 3 devices per license)
-    const deviceId = generateDeviceFingerprint(request);
-    const deviceActivation = await db.activateLicenseDevice(licenseKey, deviceId, 'Browser Extension');
-
-    if (!deviceActivation.allowed) {
+    if (!removed) {
       return NextResponse.json(
+        { success: false, message: 'Failed to deactivate device' },
         { 
-          valid: false, 
-          message: deviceActivation.message,
-          activeDevices: deviceActivation.activeDevices,
-          maxDevices: license.maxDevices || 3
-        },
-        { 
-          status: 403,
+          status: 400,
           headers: {
             'Access-Control-Allow-Origin': '*',
             'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
@@ -129,15 +96,15 @@ export async function POST(request: NextRequest) {
         }
       );
     }
+
+    // Get updated activations
+    const updatedActivations = await db.getLicenseActivations(licenseKey);
 
     return NextResponse.json(
       {
-        valid: true,
-        message: 'License hợp lệ',
-        plan: license.plan,
-        expiry: license.expiryAt?.toISOString(),
-        activatedAt: license.activatedAt?.toISOString(),
-        activeDevices: deviceActivation.activeDevices,
+        success: true,
+        message: 'Device deactivated successfully',
+        activeDevices: updatedActivations.length,
         maxDevices: license.maxDevices || 3
       },
       {
@@ -150,14 +117,14 @@ export async function POST(request: NextRequest) {
     );
 
   } catch (error) {
-    console.error('Validate license error:', error);
+    console.error('Deactivate device error:', error);
     
     // Handle validation errors
     if (error instanceof ZodError) {
       return NextResponse.json(
         { 
-          valid: false,
-          error: 'Dữ liệu không hợp lệ',
+          success: false,
+          error: 'Invalid request data',
           details: error.issues.map((e) => ({
             field: e.path.join('.'),
             message: e.message
@@ -175,7 +142,7 @@ export async function POST(request: NextRequest) {
     }
 
     return NextResponse.json(
-      { valid: false, error: 'Lỗi hệ thống' },
+      { success: false, error: 'Internal server error' },
       { 
         status: 500,
         headers: {

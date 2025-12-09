@@ -34,7 +34,7 @@ export const licenseKeySchema = z.string()
 // Validate license request
 export const validateLicenseSchema = z.object({
   licenseKey: licenseKeySchema,
-  email: emailSchema
+  email: emailSchema.optional()
 });
 
 // Type exports
