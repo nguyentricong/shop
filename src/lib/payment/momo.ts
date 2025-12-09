@@ -42,9 +42,20 @@ export async function createMoMoPayment(params: MoMoPaymentParams): Promise<MoMo
   const sanitizedOrderInfo = params.orderInfo.trim();
 
   // Tạo signature theo documentation MoMo
-  // MoMo docs require amount as string in signature/body
+  // MoMo signature strictly alphabet order
+  // accessKey → amount → extraData → ipnUrl → orderId → orderInfo → partnerCode → redirectUrl → requestId → requestType
   const amountStr = `${params.amount}`;
-  const rawSignature = `accessKey=${MOMO_ACCESS_KEY}&amount=${amountStr}&extraData=${extraData}&ipnUrl=${sanitizedNotifyUrl}&orderId=${params.orderId}&orderInfo=${sanitizedOrderInfo}&partnerCode=${MOMO_PARTNER_CODE}&redirectUrl=${sanitizedReturnUrl}&requestId=${requestId}&requestType=${requestType}`;
+  const rawSignature =
+    `accessKey=${MOMO_ACCESS_KEY}` +
+    `&amount=${amountStr}` +
+    `&extraData=${extraData}` +
+    `&ipnUrl=${sanitizedNotifyUrl}` +
+    `&orderId=${params.orderId}` +
+    `&orderInfo=${sanitizedOrderInfo}` +
+    `&partnerCode=${MOMO_PARTNER_CODE}` +
+    `&redirectUrl=${sanitizedReturnUrl}` +
+    `&requestId=${requestId}` +
+    `&requestType=${requestType}`;
   
   const signature = crypto
     .createHmac('sha256', MOMO_SECRET_KEY)
