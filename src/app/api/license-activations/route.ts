@@ -62,7 +62,24 @@ export async function POST(request: NextRequest) {
     }
 
     // Get activations
-    const activations = await db.getLicenseActivations(licenseKey);
+    let activations: any[] = [];
+    try {
+      const result = await db.getLicenseActivations(licenseKey);
+      activations = Array.isArray(result) ? result : [];
+    } catch (dbError) {
+      console.error('Database error fetching activations:', dbError);
+      return NextResponse.json(
+        { success: false, message: 'Failed to fetch device activations' },
+        { 
+          status: 500,
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type',
+          }
+        }
+      );
+    }
 
     return NextResponse.json(
       {
