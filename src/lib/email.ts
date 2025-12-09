@@ -102,15 +102,13 @@ export async function sendLicenseEmail({ to, name, licenseKey, downloadUrl, base
           </tr>
         </table>
         
-        <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #cbd5e1;">
-          <p style="margin: 5px 0; color: #475569; font-size: 13px; font-weight: 600;">Link tải xuống (copy vào trình duyệt):</p>
-          <div style="background: #f1f5f9; border: 1px solid #cbd5e1; padding: 12px; border-radius: 6px; margin: 10px auto; max-width: 500px; overflow-x: auto;">
-            <p style="color: #2563eb; font-size: 12px; font-family: monospace; margin: 0; word-wrap: break-word; word-break: break-all;">${extensionDownloadUrl}</p>
-          </div>
-          <p style="margin: 10px 0; color: #64748b; font-size: 12px;">
-            <a href="${extensionDownloadUrl}" style="color: #2563eb; text-decoration: underline; font-weight: 600;" target="_blank">→ Hoặc nhấn vào đây để tải trực tiếp</a>
+        <p style="margin: 15px 0 5px; color: #475569; font-size: 12px;">Nếu button không hoạt động, sao chép link sau:</p>
+        <div style="background: #ffffff; border: 2px dashed #94a3b8; padding: 10px; border-radius: 6px; margin: 10px auto; max-width: 480px;">
+          <p style="color: #334155; font-size: 11px; font-family: 'Courier New', monospace; margin: 0; line-height: 1.6; word-break: break-all; user-select: all;">
+            https://ablockyoutube<span>.</span>vercel<span>.</span>app/downloads/AdBlock-Pro-YouTube<span>.</span>zip
           </p>
         </div>
+        <p style="margin: 5px 0; color: #94a3b8; font-size: 11px; font-style: italic;">Dán link trên vào thanh địa chỉ trình duyệt</p>
       </div>
       
       <div class="steps">
