@@ -24,21 +24,21 @@ export async function OPTIONS(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    // Rate limiting
-    const rateLimitResult = await checkRateLimit(request, 'api');
-    if (!rateLimitResult.success) {
-      return NextResponse.json(
-        { success: false, error: rateLimitResult.error },
-        { 
-          status: 429,
-          headers: {
-            'Access-Control-Allow-Origin': '*',
-            'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-            'Access-Control-Allow-Headers': 'Content-Type',
-          }
-        }
-      );
-    }
+    // Skip rate limiting for deactivate device (or use higher limit)
+    // const rateLimitResult = await checkRateLimit(request, 'api');
+    // if (!rateLimitResult.success) {
+    //   return NextResponse.json(
+    //     { success: false, error: rateLimitResult.error },
+    //     { 
+    //       status: 429,
+    //       headers: {
+    //         'Access-Control-Allow-Origin': '*',
+    //         'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+    //         'Access-Control-Allow-Headers': 'Content-Type',
+    //       }
+    //     }
+    //   );
+    // }
 
     const body = await request.json();
     

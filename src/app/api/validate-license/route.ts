@@ -138,7 +138,8 @@ export async function POST(request: NextRequest) {
         expiry: license.expiryAt?.toISOString(),
         activatedAt: license.activatedAt?.toISOString(),
         activeDevices: deviceActivation.activeDevices,
-        maxDevices: license.maxDevices || 3
+        maxDevices: license.maxDevices || 3,
+        activationId: deviceActivation.activationId
       },
       {
         headers: {

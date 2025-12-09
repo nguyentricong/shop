@@ -1,11 +1,11 @@
 import { RateLimiterMemory } from 'rate-limiter-flexible';
 import { NextRequest } from 'next/server';
 
-// Rate limiter cho API endpoints
+// Rate limiter cho API endpoints (DISABLED for development)
 const rateLimiter = new RateLimiterMemory({
-  points: parseInt(process.env.RATE_LIMIT_MAX_REQUESTS || '10'), // 10 requests
-  duration: parseInt(process.env.RATE_LIMIT_WINDOW_MS || '900000') / 1000, // 15 minutes
-  blockDuration: 60 * 15, // Block for 15 minutes after exceeding limit
+  points: parseInt(process.env.RATE_LIMIT_MAX_REQUESTS || '1000'), // 1000 requests (effectively disabled)
+  duration: parseInt(process.env.RATE_LIMIT_WINDOW_MS || '60000') / 1000, // 1 minute
+  blockDuration: 1, // Block for 1 second
 });
 
 // Rate limiter cho purchase (strict hơn)

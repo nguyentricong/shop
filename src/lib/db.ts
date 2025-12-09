@@ -38,6 +38,12 @@ export interface LicenseActivation {
   lastUsedAt: Date;
 }
 
+export interface TrialUser {
+  id: string;
+  deviceId: string;
+  createdAt: Date;
+}
+
 export interface User {
   id: string;
   email: string;
@@ -110,11 +116,18 @@ const initPromise = (async () => {
       created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
     );
 
+    CREATE TABLE IF NOT EXISTS trial_users (
+      id TEXT PRIMARY KEY,
+      device_id TEXT UNIQUE NOT NULL,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );
+
     CREATE INDEX IF NOT EXISTS idx_orders_email ON orders(email);
     CREATE INDEX IF NOT EXISTS idx_orders_license_key ON orders(license_key);
     CREATE INDEX IF NOT EXISTS idx_licenses_email ON licenses(email);
     CREATE INDEX IF NOT EXISTS idx_license_activations_key ON license_activations(license_key);
     CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
+    CREATE INDEX IF NOT EXISTS idx_trial_users_device ON trial_users(device_id);
   `);
 })();
 
@@ -157,6 +170,12 @@ interface DbUserRow {
   name: string;
   password_hash: string | null;
   provider: AuthProvider;
+  created_at: Date;
+}
+
+interface DbTrialUserRow {
+  id: string;
+  device_id: string;
   created_at: Date;
 }
 
@@ -209,6 +228,15 @@ function mapUser(row?: DbUserRow | null): User | undefined {
     name: row.name,
     passwordHash: row.password_hash,
     provider: row.provider,
+    createdAt: new Date(row.created_at)
+  };
+}
+
+function mapTrialUser(row?: DbTrialUserRow | null): TrialUser | undefined {
+  if (!row) return undefined;
+  return {
+    id: row.id,
+    deviceId: row.device_id,
     createdAt: new Date(row.created_at)
   };
 }
@@ -323,7 +351,7 @@ export const db = {
     return rows.map(mapLicense).filter(Boolean) as License[];
   },
 
-  async activateLicenseDevice(licenseKey: string, deviceId: string, deviceName?: string): Promise<{ allowed: boolean; message: string; activeDevices?: number }> {
+  async activateLicenseDevice(licenseKey: string, deviceId: string, deviceName?: string): Promise<{ allowed: boolean; message: string; activeDevices?: number; activationId?: string }> {
     if (!pool) throw new Error('DATABASE_URL not configured');
     await initPromise;
 
@@ -349,7 +377,7 @@ export const db = {
         `UPDATE license_activations SET last_used_at = NOW() WHERE license_key = $1 AND device_id = $2`,
         [licenseKey, deviceId]
       );
-      return { allowed: true, message: 'Device already activated', activeDevices: existingResult.rows.length };
+      return { allowed: true, message: 'Device already activated', activeDevices: existingResult.rows.length, activationId: existingResult.rows[0].id };
     }
 
     // Count active devices
@@ -372,7 +400,7 @@ export const db = {
       [id, licenseKey, deviceId, deviceName || null]
     );
 
-    return { allowed: true, message: 'Device activated', activeDevices: activeDevices + 1 };
+    return { allowed: true, message: 'Device activated', activeDevices: activeDevices + 1, activationId: id };
   },
 
   async getLicenseActivations(licenseKey: string): Promise<LicenseActivation[]> {
@@ -390,6 +418,32 @@ export const db = {
     await initPromise;
     const { rowCount } = await pool.query(`DELETE FROM license_activations WHERE id = $1`, [activationId]);
     return (rowCount ?? 0) > 0;
+  },
+
+  async createTrialUser(deviceId: string): Promise<TrialUser> {
+    if (!pool) throw new Error('DATABASE_URL not configured');
+    await initPromise;
+    const id = `trial_${crypto.randomUUID()}`;
+    const { rows } = await pool.query<DbTrialUserRow>(
+      `INSERT INTO trial_users (id, device_id) VALUES ($1, $2) RETURNING *`,
+      [id, deviceId]
+    );
+    return mapTrialUser(rows[0]) as TrialUser;
+  },
+
+  async getTrialUser(deviceId: string): Promise<TrialUser | undefined> {
+    if (!pool) throw new Error('DATABASE_URL not configured');
+    await initPromise;
+    const { rows } = await pool.query<DbTrialUserRow>(
+      `SELECT * FROM trial_users WHERE device_id = $1 LIMIT 1`,
+      [deviceId]
+    );
+    return mapTrialUser(rows[0]);
+  },
+
+  async hasUsedTrial(deviceId: string): Promise<boolean> {
+    const trial = await this.getTrialUser(deviceId);
+    return !!trial;
   },
 
   async createUser(user: { email: string; name: string; passwordHash?: string | null; provider: AuthProvider }): Promise<User> {
