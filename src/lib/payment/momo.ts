@@ -36,24 +36,19 @@ export async function createMoMoPayment(params: MoMoPaymentParams): Promise<MoMo
   const requestType = 'captureWallet';
   const extraData = Buffer.from(JSON.stringify({ email: params.email })).toString('base64');
 
-  // Sanitize URLs to avoid CR/LF or spaces breaking signature
-  const sanitizedReturnUrl = params.returnUrl.replace(/[\u200B-\u200D\uFEFF]/g, '').replace(/\s+/g, '');
-  const sanitizedNotifyUrl = params.notifyUrl.replace(/[\u200B-\u200D\uFEFF]/g, '').replace(/\s+/g, '');
-  const sanitizedOrderInfo = params.orderInfo.trim();
-
   // Tạo signature theo documentation MoMo
   // MoMo signature strictly alphabet order
+  // KHÔNG ĐƯỢC SANITIZE - phải dùng dữ liệu exactly the same như body gửi lên
   // accessKey → amount → extraData → ipnUrl → orderId → orderInfo → partnerCode → redirectUrl → requestId → requestType
-  const amountStr = `${params.amount}`;
   const rawSignature =
     `accessKey=${MOMO_ACCESS_KEY}` +
-    `&amount=${amountStr}` +
+    `&amount=${params.amount}` +
     `&extraData=${extraData}` +
-    `&ipnUrl=${sanitizedNotifyUrl}` +
+    `&ipnUrl=${params.notifyUrl}` +
     `&orderId=${params.orderId}` +
-    `&orderInfo=${sanitizedOrderInfo}` +
+    `&orderInfo=${params.orderInfo}` +
     `&partnerCode=${MOMO_PARTNER_CODE}` +
-    `&redirectUrl=${sanitizedReturnUrl}` +
+    `&redirectUrl=${params.returnUrl}` +
     `&requestId=${requestId}` +
     `&requestType=${requestType}`;
   
@@ -66,11 +61,11 @@ export async function createMoMoPayment(params: MoMoPaymentParams): Promise<MoMo
     partnerCode: MOMO_PARTNER_CODE,
     accessKey: MOMO_ACCESS_KEY,
     requestId,
-    amount: amountStr,
+    amount: params.amount,
     orderId: params.orderId,
-    orderInfo: sanitizedOrderInfo,
-    redirectUrl: sanitizedReturnUrl,
-    ipnUrl: sanitizedNotifyUrl,
+    orderInfo: params.orderInfo,
+    redirectUrl: params.returnUrl,
+    ipnUrl: params.notifyUrl,
     requestType,
     extraData,
     signature,
@@ -80,10 +75,10 @@ export async function createMoMoPayment(params: MoMoPaymentParams): Promise<MoMo
   // Debug log (mask secret)
   console.log('MoMo payload', {
     orderId: params.orderId,
-    amount: amountStr,
-    orderInfo: sanitizedOrderInfo,
-    redirectUrl: sanitizedReturnUrl,
-    ipnUrl: sanitizedNotifyUrl,
+    amount: params.amount,
+    orderInfo: params.orderInfo,
+    redirectUrl: params.returnUrl,
+    ipnUrl: params.notifyUrl,
     rawSignature,
     signature,
   });
