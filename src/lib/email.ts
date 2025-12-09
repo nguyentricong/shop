@@ -90,7 +90,7 @@ export async function sendLicenseEmail({ to, name, licenseKey, downloadUrl, base
       
       <div style="background: #f0f9ff; border: 2px solid #3b82f6; border-radius: 8px; padding: 20px; margin: 20px 0; text-align: center;">
         <h3 style="margin: 0 0 15px; color: #1e40af;">📥 TẢI EXTENSION</h3>
-        <p style="margin: 10px 0; color: #64748b; font-size: 14px;">File <strong>AdBlock-Pro-YouTube.zip</strong></p>
+        <p style="margin: 10px 0; color: #64748b; font-size: 14px;">File <strong>adBlock-Pro-YouTube.zip</strong></p>
         
         <table border="0" cellspacing="0" cellpadding="0" align="center" style="margin: 15px auto;">
           <tr>
@@ -113,8 +113,8 @@ export async function sendLicenseEmail({ to, name, licenseKey, downloadUrl, base
       
       <div style="background: #f8fafc; padding: 20px; border-radius: 8px; margin: 20px 0;">
         <h3 style="margin: 0 0 15px; color: #1e293b;">📋 Hướng dẫn cài đặt (3 bước):</h3>
-        <div class="step">1️⃣ Tải file ZIP ở trên → Giải nén</div>
-        <div class="step">2️⃣ Chrome: <code style="background: #e2e8f0; padding: 2px 6px;">chrome://extensions/</code> → Bật <strong>Developer mode</strong> → <strong>Load unpacked</strong> → Chọn thư mục</div>
+        <div class="step">1️⃣ Tải file ZIP ở trên → Giải nén → Có thư mục <strong>adblock-pro</strong></div>
+        <div class="step">2️⃣ Chrome: <code style="background: #e2e8f0; padding: 2px 6px;">chrome://extensions/</code> → Bật <strong>Developer mode</strong> → <strong>Load unpacked</strong> → Chọn thư mục <strong>adblock-pro</strong> vừa giải nén</div>
         <div class="step">3️⃣ Mở extension → Nhập License Key → Xác nhận ✅</div>
       </div>
       
