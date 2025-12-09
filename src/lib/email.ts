@@ -103,12 +103,12 @@ export async function sendLicenseEmail({ to, name, licenseKey, downloadUrl, base
         </table>
         
         <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #cbd5e1;">
-          <p style="margin: 5px 0; color: #475569; font-size: 13px; font-weight: 600;">Link tải xuống:</p>
-          <div style="background: #ffffff; border: 1px solid #cbd5e1; padding: 12px; border-radius: 6px; margin: 10px auto; max-width: 500px;">
-            <code style="color: #2563eb; font-size: 12px; font-family: monospace; white-space: nowrap; overflow-x: auto; display: block;">${extensionDownloadUrl}</code>
+          <p style="margin: 5px 0; color: #475569; font-size: 13px; font-weight: 600;">Link tải xuống (copy vào trình duyệt):</p>
+          <div style="background: #f1f5f9; border: 1px solid #cbd5e1; padding: 12px; border-radius: 6px; margin: 10px auto; max-width: 500px; overflow-x: auto;">
+            <p style="color: #2563eb; font-size: 12px; font-family: monospace; margin: 0; word-wrap: break-word; word-break: break-all;">${extensionDownloadUrl}</p>
           </div>
           <p style="margin: 10px 0; color: #64748b; font-size: 12px;">
-            Copy link trên vào trình duyệt hoặc <a href="${extensionDownloadUrl}" style="color: #2563eb; text-decoration: underline; font-weight: 600;" target="_blank">nhấn vào đây</a>
+            <a href="${extensionDownloadUrl}" style="color: #2563eb; text-decoration: underline; font-weight: 600;" target="_blank">→ Hoặc nhấn vào đây để tải trực tiếp</a>
           </p>
         </div>
       </div>
