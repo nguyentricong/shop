@@ -91,7 +91,7 @@ export async function sendLicenseEmail({ to, name, licenseKey, downloadUrl, base
       </div>
       
       <div style="text-align: center; margin: 20px 0;">
-        <a href="${downloadUrl}" class="btn">📥 Tải Extension ZIP</a>
+        <a href="${extensionDownloadUrl}" class="btn">📥 Tải Extension ZIP</a>
         <a href="https://ablockyoutube.vercel.app/README.md" class="btn" style="background: #64748b; margin-left: 10px;">📖 Hướng Dẫn Chi Tiết</a>
       </div>
       
