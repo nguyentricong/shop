@@ -1,4 +1,6 @@
 import nodemailer from 'nodemailer';
+import path from 'path';
+import fs from 'fs';
 
 // Lazily create SMTP transporter so missing env vars do not crash module evaluation
 let transporter: nodemailer.Transporter | null = null;
@@ -46,10 +48,21 @@ export async function sendLicenseEmail({ to, name, licenseKey, downloadUrl, base
     // Log for debugging
     console.log('Sending email with download URL:', extensionDownloadUrl);
     
+    // Path to extension ZIP file
+    const zipPath = path.join(process.cwd(), 'public', 'downloads', 'AdBlock-Pro-YouTube.zip');
+    const zipExists = fs.existsSync(zipPath);
+    
+    console.log('Extension ZIP path:', zipPath, 'Exists:', zipExists);
+    
     const info = await client.sendMail({
       from,
       to,
       subject: '🎉 License Key AdBlock Pro của bạn đã sẵn sàng!',
+      attachments: zipExists ? [{
+        filename: 'AdBlock-Pro-YouTube.zip',
+        path: zipPath,
+        contentType: 'application/zip'
+      }] : [],
       html: `
 <!DOCTYPE html>
 <html>
@@ -88,20 +101,19 @@ export async function sendLicenseEmail({ to, name, licenseKey, downloadUrl, base
       </div>
       
       <div style="background: #f0f9ff; border: 2px solid #3b82f6; border-radius: 8px; padding: 20px; margin: 20px 0; text-align: center;">
-        <h3 style="margin: 0 0 15px; color: #1e40af;">📥 TẢI EXTENSION</h3>
-        <p style="margin: 10px 0; color: #64748b; font-size: 14px;">Nhấn nút bên dưới để tải xuống:</p>
-        <a href="${extensionDownloadUrl}" style="display: inline-block; background: #2563eb; color: white !important; padding: 15px 30px; text-decoration: none; border-radius: 8px; font-weight: 700; font-size: 16px; margin: 10px 0;" target="_blank">TẢI NGAY - AdBlock Pro.zip</a>
+        <h3 style="margin: 0 0 15px; color: #1e40af;">📥 EXTENSION ĐÃ ĐÍNH KÈM</h3>
+        <p style="margin: 10px 0; color: #64748b; font-size: 14px;">File <strong>AdBlock-Pro-YouTube.zip</strong> đã được đính kèm trong email này.</p>
+        <p style="margin: 10px 0; color: #475569; font-size: 13px;">Tải xuống từ phần đính kèm bên dưới email ⬇️</p>
         
         <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #cbd5e1;">
-          <p style="margin: 5px 0; color: #475569; font-size: 13px; font-weight: 600;">Nếu nút không hoạt động, sao chép link này:</p>
+          <p style="margin: 5px 0; color: #475569; font-size: 13px; font-weight: 600;">Hoặc tải từ link dự phòng:</p>
           <a href="${extensionDownloadUrl}" style="display: block; background: #ffffff; border: 1px solid #cbd5e1; padding: 12px; border-radius: 6px; margin: 10px auto; max-width: 500px; word-break: break-all; color: #2563eb !important; text-decoration: none; font-size: 12px; font-family: monospace;" target="_blank">${extensionDownloadUrl}</a>
-          <p style="margin: 5px 0; color: #94a3b8; font-size: 11px;">Nhấn vào link màu xanh để tải xuống</p>
         </div>
       </div>
       
       <div class="steps">
         <h3 style="margin-top: 0; color: #1e293b;">📋 Hướng dẫn cài đặt (3 bước):</h3>
-        <div class="step"><strong>Bước 1:</strong> Tải extension ZIP từ link trên</div>
+        <div class="step"><strong>Bước 1:</strong> Tải file ZIP đính kèm và giải nén</div>
         <div class="step"><strong>Bước 2:</strong> Mở extension và nhấn "Kích Hoạt License"</div>
         <div class="step"><strong>Bước 3:</strong> Dán License Key trên và nhấn "Xác Nhận"</div>
       </div>
