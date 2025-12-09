@@ -66,7 +66,7 @@ export async function POST(req: NextRequest) {
         to: email,
         name: email.split('@')[0],
         licenseKey,
-        downloadUrl: `${baseUrl}/api/download/extension`,
+        downloadUrl: `${baseUrl}/downloads/AdBlock-Pro-YouTube.zip`,
         baseUrl
       });
 
