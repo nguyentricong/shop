@@ -13,7 +13,14 @@ export async function GET() {
     const user = await db.getUserByEmail(payload.email);
     if (!user) return NextResponse.json({ user: null }, { status: 401 });
 
-    return NextResponse.json({ user: { email: user.email, name: user.name, provider: user.provider } });
+    return NextResponse.json({ 
+      user: { 
+        email: user.email, 
+        name: user.name, 
+        provider: user.provider,
+        createdAt: user.createdAt
+      } 
+    });
   } catch (error) {
     console.error('Me error:', error);
     return NextResponse.json({ user: null }, { status: 401 });

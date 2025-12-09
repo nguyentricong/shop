@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, type FormEvent } from 'react';
-import { signIn } from 'next-auth/react';
 import Link from 'next/link';
 
 export default function LoginPage() {
@@ -10,22 +9,31 @@ export default function LoginPage() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const handleLogin = async (e: FormEvent) =>
-  {
+  const handleLogin = async (e: FormEvent) => {
     e.preventDefault();
     setError('');
     setLoading(true);
-    const res = await signIn('credentials', { redirect: false, email, password });
+    
+    const res = await fetch('/api/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password }),
+      credentials: 'include'
+    });
+    
     setLoading(false);
-    if (res?.error) {
-      setError(res.error || 'Đăng nhập thất bại');
-    } else {
-      window.location.href = '/dashboard';
+    
+    if (!res.ok) {
+      const data = await res.json();
+      setError(data.error || 'Đăng nhập thất bại');
+      return;
     }
+    
+    window.location.href = '/dashboard';
   };
 
   const handleGoogle = async () => {
-    await signIn('google', { callbackUrl: '/dashboard' });
+    window.location.href = '/api/auth/signin?provider=google&callbackUrl=/dashboard';
   };
 
   return (

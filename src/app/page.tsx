@@ -2,71 +2,10 @@
 
 import Link from 'next/link';
 import { Lock, Zap, CheckCircle, Shield, Headphones, Award } from 'lucide-react';
-import { useEffect, useState } from 'react';
-
-interface User {
-  email: string;
-  name: string;
-}
 
 export default function Home() {
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        const res = await fetch('/api/auth/me');
-        if (res.ok) {
-          const data = await res.json();
-          setUser(data.user);
-        }
-      } catch (error) {
-        console.error('Auth check failed:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    checkAuth();
-  }, []);
-
-  const handleLogout = async () => {
-    await fetch('/api/auth/logout', { method: 'POST' });
-    setUser(null);
-    window.location.href = '/';
-  };
-
   return (
     <div style={{ minHeight: '100vh', background: 'var(--background)' }}>
-      {/* Auth Navbar */}
-      <nav style={{ background: '#fff', borderBottom: '1px solid #e2e8f0', padding: '0.5rem 1.5rem' }}>
-        <div style={{ maxWidth: 1200, margin: '0 auto', display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: 16 }}>
-          {!loading && (
-            <>
-              {user ? (
-                <>
-                  <span style={{ fontSize: 14, color: '#475569' }}>👤 {user.name}</span>
-                  <Link href="/dashboard" style={{ fontSize: 14, textDecoration: 'none', color: 'var(--primary)', fontWeight: 600 }}>
-                    Dashboard
-                  </Link>
-                  <button onClick={handleLogout} style={{ fontSize: 14, background: '#f1f5f9', border: '1px solid #cbd5e1', padding: '0.5rem 1rem', borderRadius: 6, cursor: 'pointer', fontWeight: 600 }}>
-                    Đăng xuất
-                  </button>
-                </>
-              ) : (
-                <>
-                  <Link href="/auth/login" style={{ fontSize: 14, textDecoration: 'none', color: 'var(--primary)', fontWeight: 600 }}>
-                    Đăng nhập
-                  </Link>
-                  <Link href="/auth/register" style={{ fontSize: 14, textDecoration: 'none', background: 'var(--primary)', color: '#fff', padding: '0.5rem 1rem', borderRadius: 6, fontWeight: 600 }}>
-                    Đăng ký
-                  </Link>
-                </>
-              )}
-            </>
-          )}
-        </div>
-      </nav>
       {/* Hero Section */}
       <section style={{ padding: '3rem 1.5rem 2.5rem', background: 'linear-gradient(120deg, #e0e7ff 0%, #f8fafc 100%)' }}>
         <div style={{ maxWidth: 900, margin: '0 auto', textAlign: 'center' }}>

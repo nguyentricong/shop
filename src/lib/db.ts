@@ -34,7 +34,7 @@ export interface User {
   name: string;
   passwordHash?: string | null;
   provider: AuthProvider;
-  createdAt: Date;
+  createdAt: Date | string;
 }
 
 // -----------------------------------------------------------------------------
@@ -295,7 +295,11 @@ export const db = {
     if (!pool) throw new Error('DATABASE_URL not configured');
     await initPromise;
     const { rows } = await pool.query<DbUserRow>(`SELECT * FROM users WHERE email = $1 LIMIT 1`, [email.toLowerCase()]);
-    return mapUser(rows[0]);
+    const user = mapUser(rows[0]);
+    if (user) {
+      user.createdAt = user.createdAt instanceof Date ? user.createdAt.toISOString() : user.createdAt;
+    }
+    return user;
   },
 
   async upsertOAuthUser(params: { email: string; name: string; provider: AuthProvider }): Promise<User> {
