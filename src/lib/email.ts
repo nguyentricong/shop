@@ -42,6 +42,10 @@ export async function sendLicenseEmail({ to, name, licenseKey, downloadUrl, base
   try {
     const from = process.env.SMTP_FROM || 'AdBlock Pro <no-reply@example.com>';
     const extensionDownloadUrl = downloadUrl || `${baseUrl || 'https://ablockyoutube.vercel.app'}/api/download/extension`;
+    
+    // Log for debugging
+    console.log('Sending email with download URL:', extensionDownloadUrl);
+    
     const info = await client.sendMail({
       from,
       to,
@@ -91,8 +95,16 @@ export async function sendLicenseEmail({ to, name, licenseKey, downloadUrl, base
       </div>
       
       <div style="text-align: center; margin: 20px 0;">
-        <a href="${extensionDownloadUrl}" class="btn">📥 Tải Extension ZIP</a>
-        <a href="https://ablockyoutube.vercel.app/README.md" class="btn" style="background: #64748b; margin-left: 10px;">📖 Hướng Dẫn Chi Tiết</a>
+        <a href="${extensionDownloadUrl}" class="btn" style="background: #2563eb; color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: 600; display: inline-block;">📥 Tải Extension ZIP</a>
+      </div>
+      
+      <p style="text-align: center; margin: 10px 0; color: #64748b; font-size: 14px;">
+        Hoặc copy link này vào trình duyệt:<br>
+        <code style="background: #f1f5f9; padding: 8px 12px; border-radius: 4px; display: inline-block; margin-top: 5px; word-break: break-all;">${extensionDownloadUrl}</code>
+      </p>
+      
+      <div style="text-align: center; margin: 10px 0;">
+        <a href="https://ablockyoutube.vercel.app/README.md" class="btn" style="background: #64748b; color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: 600; display: inline-block;">📖 Hướng Dẫn Chi Tiết</a>
       </div>
       
       <div style="background: #fffbeb; border-left: 4px solid #f59e0b; padding: 15px; margin: 20px 0;">
