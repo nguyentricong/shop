@@ -1,6 +1,5 @@
 import nodemailer from 'nodemailer';
 import path from 'path';
-import fs from 'fs';
 
 // Lazily create SMTP transporter so missing env vars do not crash module evaluation
 let transporter: nodemailer.Transporter | null = null;
@@ -43,26 +42,25 @@ export async function sendLicenseEmail({ to, name, licenseKey, downloadUrl, base
 
   try {
     const from = process.env.SMTP_FROM || 'AdBlock Pro <no-reply@example.com>';
-    const extensionDownloadUrl = downloadUrl || `${baseUrl || 'https://ablockyoutube.vercel.app'}/api/download/extension`;
+    const extensionDownloadUrl = downloadUrl || `${baseUrl || 'https://ablockyoutube.vercel.app'}/downloads/AdBlock-Pro-YouTube.zip`;
     
     // Log for debugging
     console.log('Sending email with download URL:', extensionDownloadUrl);
     
     // Path to extension ZIP file
     const zipPath = path.join(process.cwd(), 'public', 'downloads', 'AdBlock-Pro-YouTube.zip');
-    const zipExists = fs.existsSync(zipPath);
     
-    console.log('Extension ZIP path:', zipPath, 'Exists:', zipExists);
+    console.log('Extension ZIP path:', zipPath);
     
     const info = await client.sendMail({
       from,
       to,
       subject: '🎉 License Key AdBlock Pro của bạn đã sẵn sàng!',
-      attachments: zipExists ? [{
+      attachments: [{
         filename: 'AdBlock-Pro-YouTube.zip',
         path: zipPath,
         contentType: 'application/zip'
-      }] : [],
+      }],
       html: `
 <!DOCTYPE html>
 <html>
