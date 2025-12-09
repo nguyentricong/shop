@@ -52,6 +52,7 @@ export async function createMoMoPayment(params: MoMoPaymentParams): Promise<MoMo
     `&ipnUrl=${params.notifyUrl}` +
     `&orderId=${params.orderId}` +
     `&orderInfo=${rawOrderInfo}` +
+    `&orderType=momo_wallet` +
     `&partnerCode=${MOMO_PARTNER_CODE}` +
     `&redirectUrl=${params.returnUrl}` +
     `&requestId=${requestId}` +
@@ -71,7 +72,8 @@ export async function createMoMoPayment(params: MoMoPaymentParams): Promise<MoMo
     orderInfo: rawOrderInfo,
     redirectUrl: params.returnUrl,
     ipnUrl: params.notifyUrl,
-    requestType,
+    requestType: 'captureWallet',
+    orderType: 'momo_wallet',
     extraData,
     signature,
     lang: 'vi'
