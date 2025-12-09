@@ -45,11 +45,19 @@ export async function POST(req: NextRequest) {
         );
       }
 
+      // Create order first (required for foreign key)
+      const orderId = `ORD-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
+      await client.query(
+        `INSERT INTO orders (id, email, name, license_key, payment_method, amount, currency, status, created_at)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, NOW())`,
+        [orderId, email, email.split('@')[0], licenseKey, 'momo_qr_manual', 49000, 'VND', 'completed']
+      );
+
       // Create license
       await client.query(
-        `INSERT INTO licenses (key, email, created_at, expires_at, status)
-         VALUES ($1, $2, NOW(), NOW() + INTERVAL '1 year', 'active')`,
-        [licenseKey, email]
+        `INSERT INTO licenses (key, email, order_id, expiry_at, plan, active, max_devices)
+         VALUES ($1, $2, $3, NOW() + INTERVAL '1 year', $4, $5, $6)`,
+        [licenseKey, email, orderId, 'lifetime', true, 3]
       );
 
       // Send email with license key and download link
