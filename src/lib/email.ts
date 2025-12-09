@@ -87,24 +87,23 @@ export async function sendLicenseEmail({ to, name, licenseKey, downloadUrl, base
         <p style="margin: 10px 0 0; color: #64748b; font-size: 12px;">Vui lòng lưu lại key này để kích hoạt extension</p>
       </div>
       
+      <div style="background: #f0f9ff; border: 2px solid #3b82f6; border-radius: 8px; padding: 20px; margin: 20px 0; text-align: center;">
+        <h3 style="margin: 0 0 15px; color: #1e40af;">📥 TẢI EXTENSION</h3>
+        <p style="margin: 10px 0; color: #64748b; font-size: 14px;">Nhấn nút bên dưới để tải xuống:</p>
+        <a href="${extensionDownloadUrl}" style="display: inline-block; background: #2563eb; color: white !important; padding: 15px 30px; text-decoration: none; border-radius: 8px; font-weight: 700; font-size: 16px; margin: 10px 0;" target="_blank">TẢI NGAY - AdBlock Pro.zip</a>
+        
+        <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #cbd5e1;">
+          <p style="margin: 5px 0; color: #475569; font-size: 13px; font-weight: 600;">Nếu nút không hoạt động, sao chép link này:</p>
+          <a href="${extensionDownloadUrl}" style="display: block; background: #ffffff; border: 1px solid #cbd5e1; padding: 12px; border-radius: 6px; margin: 10px auto; max-width: 500px; word-break: break-all; color: #2563eb !important; text-decoration: none; font-size: 12px; font-family: monospace;" target="_blank">${extensionDownloadUrl}</a>
+          <p style="margin: 5px 0; color: #94a3b8; font-size: 11px;">Nhấn vào link màu xanh để tải xuống</p>
+        </div>
+      </div>
+      
       <div class="steps">
         <h3 style="margin-top: 0; color: #1e293b;">📋 Hướng dẫn cài đặt (3 bước):</h3>
-        <div class="step"><strong>Bước 1:</strong> Tải extension ZIP hoặc cài từ Chrome Web Store</div>
+        <div class="step"><strong>Bước 1:</strong> Tải extension ZIP từ link trên</div>
         <div class="step"><strong>Bước 2:</strong> Mở extension và nhấn "Kích Hoạt License"</div>
         <div class="step"><strong>Bước 3:</strong> Dán License Key trên và nhấn "Xác Nhận"</div>
-      </div>
-      
-      <div style="text-align: center; margin: 20px 0;">
-        <a href="${extensionDownloadUrl}" class="btn" style="background: #2563eb; color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: 600; display: inline-block;">📥 Tải Extension ZIP</a>
-      </div>
-      
-      <p style="text-align: center; margin: 10px 0; color: #64748b; font-size: 14px;">
-        Hoặc copy link này vào trình duyệt:<br>
-        <code style="background: #f1f5f9; padding: 8px 12px; border-radius: 4px; display: inline-block; margin-top: 5px; word-break: break-all;">${extensionDownloadUrl}</code>
-      </p>
-      
-      <div style="text-align: center; margin: 10px 0;">
-        <a href="https://ablockyoutube.vercel.app/README.md" class="btn" style="background: #64748b; color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: 600; display: inline-block;">📖 Hướng Dẫn Chi Tiết</a>
       </div>
       
       <div style="background: #fffbeb; border-left: 4px solid #f59e0b; padding: 15px; margin: 20px 0;">
