@@ -74,7 +74,6 @@ export async function createMoMoPayment(params: MoMoPaymentParams): Promise<MoMo
     redirectUrl: params.returnUrl,
     ipnUrl: params.notifyUrl,
     requestType: 'captureWallet',
-    orderType: 'momo_wallet',
     extraData,
     signature,
     lang: 'vi'
