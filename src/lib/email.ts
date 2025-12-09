@@ -90,15 +90,26 @@ export async function sendLicenseEmail({ to, name, licenseKey, downloadUrl, base
       
       <div style="background: #f0f9ff; border: 2px solid #3b82f6; border-radius: 8px; padding: 20px; margin: 20px 0; text-align: center;">
         <h3 style="margin: 0 0 15px; color: #1e40af;">📥 TẢI EXTENSION</h3>
-        <p style="margin: 10px 0; color: #64748b; font-size: 14px;">Nhấn nút bên dưới để tải <strong>AdBlock-Pro-YouTube.zip</strong></p>
+        <p style="margin: 10px 0; color: #64748b; font-size: 14px;">File <strong>AdBlock-Pro-YouTube.zip</strong></p>
         
-        <a href="${extensionDownloadUrl}" style="display: inline-block; background: #2563eb; color: white !important; padding: 15px 30px; text-decoration: none; border-radius: 8px; font-weight: 700; font-size: 16px; margin: 15px 0;" target="_blank">⬇️ TẢI XUỐNG NGAY</a>
+        <table border="0" cellspacing="0" cellpadding="0" align="center" style="margin: 15px auto;">
+          <tr>
+            <td align="center" style="border-radius: 8px; background: #2563eb;">
+              <a href="${extensionDownloadUrl}" target="_blank" style="display: inline-block; padding: 15px 30px; font-family: Arial, sans-serif; font-size: 16px; font-weight: bold; color: #ffffff; text-decoration: none; border-radius: 8px;">
+                ⬇️ TẢI XUỐNG NGAY
+              </a>
+            </td>
+          </tr>
+        </table>
         
         <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #cbd5e1;">
-          <p style="margin: 5px 0; color: #475569; font-size: 13px; font-weight: 600;">Hoặc copy link này vào trình duyệt:</p>
+          <p style="margin: 5px 0; color: #475569; font-size: 13px; font-weight: 600;">Link tải xuống:</p>
           <div style="background: #ffffff; border: 1px solid #cbd5e1; padding: 12px; border-radius: 6px; margin: 10px auto; max-width: 500px;">
-            <a href="${extensionDownloadUrl}" style="word-break: break-word; color: #2563eb !important; text-decoration: none; font-size: 12px; font-family: monospace; display: inline;" target="_blank">${extensionDownloadUrl}</a>
+            <code style="color: #2563eb; font-size: 12px; font-family: monospace; white-space: nowrap; overflow-x: auto; display: block;">${extensionDownloadUrl}</code>
           </div>
+          <p style="margin: 10px 0; color: #64748b; font-size: 12px;">
+            Copy link trên vào trình duyệt hoặc <a href="${extensionDownloadUrl}" style="color: #2563eb; text-decoration: underline; font-weight: 600;" target="_blank">nhấn vào đây</a>
+          </p>
         </div>
       </div>
       
