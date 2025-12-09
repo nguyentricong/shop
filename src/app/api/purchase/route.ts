@@ -22,6 +22,14 @@ function getClientIp(request: NextRequest): string {
          '127.0.0.1';
 }
 
+// Remove whitespace, newlines, and zero-width chars from URLs to avoid signature errors
+function sanitizeUrl(url: string): string {
+  return url
+    .replace(/[\u200B-\u200D\uFEFF]/g, '') // zero-width chars
+    .replace(/\s+/g, '') // spaces, tabs, newlines
+    .trim();
+}
+
 export async function POST(request: NextRequest) {
   try {
     // 1. Rate Limiting - Chống spam/abuse
@@ -42,7 +50,8 @@ export async function POST(request: NextRequest) {
     const licenseKey = generateLicenseKey();
     const orderId = `ORD-${Date.now()}`;
     const amount = 49000; // VND
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+    const rawBaseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+    const baseUrl = sanitizeUrl(rawBaseUrl);
 
     // 4. Tạo order trong database với status pending
     const order = await db.createOrder({

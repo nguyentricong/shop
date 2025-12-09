@@ -36,8 +36,13 @@ export async function createMoMoPayment(params: MoMoPaymentParams): Promise<MoMo
   const requestType = 'captureWallet';
   const extraData = Buffer.from(JSON.stringify({ email: params.email })).toString('base64');
 
+  // Sanitize URLs to avoid CR/LF or spaces breaking signature
+  const sanitizedReturnUrl = params.returnUrl.replace(/[\u200B-\u200D\uFEFF]/g, '').replace(/\s+/g, '');
+  const sanitizedNotifyUrl = params.notifyUrl.replace(/[\u200B-\u200D\uFEFF]/g, '').replace(/\s+/g, '');
+  const sanitizedOrderInfo = params.orderInfo.trim();
+
   // Tạo signature theo documentation MoMo
-  const rawSignature = `accessKey=${MOMO_ACCESS_KEY}&amount=${params.amount}&extraData=${extraData}&ipnUrl=${params.notifyUrl}&orderId=${params.orderId}&orderInfo=${params.orderInfo}&partnerCode=${MOMO_PARTNER_CODE}&redirectUrl=${params.returnUrl}&requestId=${requestId}&requestType=${requestType}`;
+  const rawSignature = `accessKey=${MOMO_ACCESS_KEY}&amount=${params.amount}&extraData=${extraData}&ipnUrl=${sanitizedNotifyUrl}&orderId=${params.orderId}&orderInfo=${sanitizedOrderInfo}&partnerCode=${MOMO_PARTNER_CODE}&redirectUrl=${sanitizedReturnUrl}&requestId=${requestId}&requestType=${requestType}`;
   
   const signature = crypto
     .createHmac('sha256', MOMO_SECRET_KEY)
@@ -50,9 +55,9 @@ export async function createMoMoPayment(params: MoMoPaymentParams): Promise<MoMo
     requestId,
     amount: params.amount,
     orderId: params.orderId,
-    orderInfo: params.orderInfo,
-    redirectUrl: params.returnUrl,
-    ipnUrl: params.notifyUrl,
+    orderInfo: sanitizedOrderInfo,
+    redirectUrl: sanitizedReturnUrl,
+    ipnUrl: sanitizedNotifyUrl,
     requestType,
     extraData,
     signature,
