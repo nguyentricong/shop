@@ -97,16 +97,42 @@ export async function sendLicenseEmail({ to, name, licenseKey, downloadUrl, base
         <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #cbd5e1;">
           <p style="margin: 5px 0; color: #475569; font-size: 13px; font-weight: 600;">Hoặc copy link này vào trình duyệt:</p>
           <div style="background: #ffffff; border: 1px solid #cbd5e1; padding: 12px; border-radius: 6px; margin: 10px auto; max-width: 500px;">
-            <a href="${extensionDownloadUrl}" style="word-break: break-all; color: #2563eb !important; text-decoration: none; font-size: 12px; font-family: monospace;" target="_blank">${extensionDownloadUrl}</a>
+            <a href="${extensionDownloadUrl}" style="word-break: break-word; color: #2563eb !important; text-decoration: none; font-size: 12px; font-family: monospace; display: inline;" target="_blank">${extensionDownloadUrl}</a>
           </div>
         </div>
       </div>
       
       <div class="steps">
-        <h3 style="margin-top: 0; color: #1e293b;">📋 Hướng dẫn cài đặt (3 bước):</h3>
-        <div class="step"><strong>Bước 1:</strong> Nhấn nút "TẢI XUỐNG NGAY" ở trên để tải file ZIP</div>
-        <div class="step"><strong>Bước 2:</strong> Mở extension và nhấn "Kích Hoạt License"</div>
-        <div class="step"><strong>Bước 3:</strong> Dán License Key trên và nhấn "Xác Nhận"</div>
+        <h3 style="margin-top: 0; color: #1e293b;">📋 Hướng dẫn cài đặt chi tiết:</h3>
+        
+        <div style="background: #f8fafc; padding: 15px; border-radius: 6px; margin: 10px 0;">
+          <h4 style="margin: 0 0 10px; color: #0f172a;">Bước 1: Tải và giải nén Extension</h4>
+          <div class="step">Nhấn nút <strong>"TẢI XUỐNG NGAY"</strong> ở trên</div>
+          <div class="step">File <strong>AdBlock-Pro-YouTube.zip</strong> sẽ được tải về</div>
+          <div class="step">Giải nén file ZIP (chuột phải → Extract All)</div>
+        </div>
+        
+        <div style="background: #f8fafc; padding: 15px; border-radius: 6px; margin: 10px 0;">
+          <h4 style="margin: 0 0 10px; color: #0f172a;">Bước 2: Cài đặt Extension vào Chrome</h4>
+          <div class="step">Mở Chrome và truy cập: <code style="background: #e2e8f0; padding: 2px 6px; border-radius: 3px;">chrome://extensions/</code></div>
+          <div class="step">Bật <strong>Developer mode</strong> (công tắc ở góc trên bên phải)</div>
+          <div class="step">Nhấn nút <strong>"Load unpacked"</strong> (Tải tiện ích đã giải nén)</div>
+          <div class="step">Chọn thư mục đã giải nén ở Bước 1</div>
+          <div class="step">Extension AdBlock Pro sẽ xuất hiện trong danh sách</div>
+        </div>
+        
+        <div style="background: #f8fafc; padding: 15px; border-radius: 6px; margin: 10px 0;">
+          <h4 style="margin: 0 0 10px; color: #0f172a;">Bước 3: Kích hoạt License Key</h4>
+          <div class="step">Nhấn vào icon Extension AdBlock Pro trên thanh công cụ Chrome</div>
+          <div class="step">Nhấn nút <strong>"Kích Hoạt License"</strong></div>
+          <div class="step">Dán License Key của bạn (ở trên) vào ô nhập</div>
+          <div class="step">Nhấn <strong>"Xác Nhận"</strong> để hoàn tất</div>
+          <div class="step">✅ Hoàn tất! Giờ bạn có thể xem YouTube & Facebook không quảng cáo</div>
+        </div>
+        
+        <div style="background: #fffbeb; border-left: 4px solid #f59e0b; padding: 12px 15px; margin: 15px 0;">
+          <strong>💡 Mẹo:</strong> Ghim extension lên thanh công cụ bằng cách nhấn vào icon 🧩 Extensions → ghim AdBlock Pro
+        </div>
       </div>
       
       <div style="background: #fffbeb; border-left: 4px solid #f59e0b; padding: 15px; margin: 20px 0;">
