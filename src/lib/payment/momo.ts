@@ -39,11 +39,13 @@ export async function createMoMoPayment(params: MoMoPaymentParams): Promise<MoMo
   // Tạo signature theo documentation MoMo
   // MoMo signature strictly alphabet order
   // Normalize unicode characters (em-dash, en-dash) để tránh encoding issues
-  // accessKey → amount → extraData → ipnUrl → orderId → orderInfo → partnerCode → redirectUrl → requestId → requestType
+  // orderInfo phải URL-encode trong signature
   const rawOrderInfo = params.orderInfo
     .replace(/–/g, '-')
     .replace(/—/g, '-')
     .normalize("NFKC");
+  
+  const orderInfoEncoded = encodeURIComponent(rawOrderInfo);
 
   const rawSignature =
     `accessKey=${MOMO_ACCESS_KEY}` +
@@ -51,7 +53,7 @@ export async function createMoMoPayment(params: MoMoPaymentParams): Promise<MoMo
     `&extraData=${extraData}` +
     `&ipnUrl=${params.notifyUrl}` +
     `&orderId=${params.orderId}` +
-    `&orderInfo=${rawOrderInfo}` +
+    `&orderInfo=${orderInfoEncoded}` +
     `&partnerCode=${MOMO_PARTNER_CODE}` +
     `&redirectUrl=${params.returnUrl}` +
     `&requestId=${requestId}` +
