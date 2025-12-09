@@ -53,11 +53,11 @@ export async function POST(req: NextRequest) {
         [orderId, email, email.split('@')[0], licenseKey, 'momo_qr_manual', 49000, 'VND', 'completed']
       );
 
-      // Create license
+      // Create license (only use columns that exist in actual table)
       await client.query(
-        `INSERT INTO licenses (key, email, order_id, expiry_at, plan, active, max_devices)
-         VALUES ($1, $2, $3, NOW() + INTERVAL '1 year', $4, $5, $6)`,
-        [licenseKey, email, orderId, 'lifetime', true, 3]
+        `INSERT INTO licenses (key, email, order_id, expiry_at, plan, active)
+         VALUES ($1, $2, $3, NOW() + INTERVAL '1 year', $4, $5)`,
+        [licenseKey, email, orderId, 'lifetime', true]
       );
 
       // Send email with license key and download link
