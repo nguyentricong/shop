@@ -64,6 +64,14 @@ export async function createMoMoPayment(params: MoMoPaymentParams): Promise<MoMo
     .update(rawSignature)
     .digest('hex');
 
+  // Debug logging for signature verification
+  console.log('=== MoMo DEBUG ===');
+  console.log('SECRET_KEY_LENGTH =', MOMO_SECRET_KEY.length);
+  console.log('SECRET_KEY_RAW =', JSON.stringify(MOMO_SECRET_KEY));
+  console.log('RAW_SIGNATURE =', rawSignature);
+  console.log('COMPUTED_SIGNATURE =', signature);
+  console.log('=== END DEBUG ===');
+
   const requestBody = {
     partnerCode: MOMO_PARTNER_CODE,
     accessKey: MOMO_ACCESS_KEY,
