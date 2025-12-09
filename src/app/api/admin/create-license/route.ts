@@ -22,6 +22,13 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    if (!pool) {
+      return NextResponse.json(
+        { error: 'Database connection not configured' },
+        { status: 500 }
+      );
+    }
+
     const client = await pool.connect();
 
     try {
