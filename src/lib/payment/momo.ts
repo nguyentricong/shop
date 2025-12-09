@@ -42,8 +42,8 @@ export async function createMoMoPayment(params: MoMoPaymentParams): Promise<MoMo
   const sanitizedOrderInfo = params.orderInfo.trim();
 
   // Tạo signature theo documentation MoMo
-  const amountStr = `${params.amount}`;
-  const rawSignature = `accessKey=${MOMO_ACCESS_KEY}&amount=${amountStr}&extraData=${extraData}&ipnUrl=${sanitizedNotifyUrl}&orderId=${params.orderId}&orderInfo=${sanitizedOrderInfo}&partnerCode=${MOMO_PARTNER_CODE}&redirectUrl=${sanitizedReturnUrl}&requestId=${requestId}&requestType=${requestType}`;
+  const amountNum = Number(params.amount);
+  const rawSignature = `accessKey=${MOMO_ACCESS_KEY}&amount=${amountNum}&extraData=${extraData}&ipnUrl=${sanitizedNotifyUrl}&orderId=${params.orderId}&orderInfo=${sanitizedOrderInfo}&partnerCode=${MOMO_PARTNER_CODE}&redirectUrl=${sanitizedReturnUrl}&requestId=${requestId}&requestType=${requestType}`;
   
   const signature = crypto
     .createHmac('sha256', MOMO_SECRET_KEY)
@@ -54,7 +54,7 @@ export async function createMoMoPayment(params: MoMoPaymentParams): Promise<MoMo
     partnerCode: MOMO_PARTNER_CODE,
     accessKey: MOMO_ACCESS_KEY,
     requestId,
-    amount: amountStr,
+    amount: amountNum,
     orderId: params.orderId,
     orderInfo: sanitizedOrderInfo,
     redirectUrl: sanitizedReturnUrl,
@@ -68,7 +68,7 @@ export async function createMoMoPayment(params: MoMoPaymentParams): Promise<MoMo
   // Debug log (mask secret)
   console.log('MoMo payload', {
     orderId: params.orderId,
-    amount: amountStr,
+    amount: amountNum,
     orderInfo: sanitizedOrderInfo,
     redirectUrl: sanitizedReturnUrl,
     ipnUrl: sanitizedNotifyUrl,
